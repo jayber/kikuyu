@@ -19,14 +19,13 @@ class SpinnerField extends CustomField {
 
     KikuyuPresenter presenter
 
+    RowMethodProperty dataSource
+
     SpinnerField() {
     }
 
-    SpinnerField(KikuyuPresenter presenter) {
-        this.presenter = presenter
-    }
-
     SpinnerField(Property property, KikuyuPresenter presenter) {
+        this.dataSource = property
         setPropertyDataSource(property)
         this.presenter = presenter
     }
@@ -53,7 +52,6 @@ class SpinnerField extends CustomField {
     }
 
     void processClick(ClickEvent event) {
-        final RowMethodProperty dataSource = getPropertyDataSource()
         final BigInteger value = (BigInteger) getValue()
         if (event.up) {
             if (value.compareTo(0)) {

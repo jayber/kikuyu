@@ -4,6 +4,7 @@ import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
 import grails.test.mixin.TestMixin
 import grails.test.mixin.support.GrailsUnitTestMixin
+import groovy.mock.interceptor.MockFor
 import kikuyu.domain.UrlMapping
 import org.junit.Test
 
@@ -19,36 +20,57 @@ class SpinnerFieldTest {
     }
 
     @Test
-    public void testEventUp() throws Exception {
-        def mock = mockFor(KikuyuPresenter)
-        mock.demand.incrementMatchOrder { UrlMapping mapping -> }
-        SpinnerField field = new SpinnerField(mock.createMock() as KikuyuPresenter)
-        field.setValue(1)
+    public void testUpClick() throws Exception {
+        def presenterMock = mockFor(KikuyuPresenter)
+        def propertyMock = new MockFor(SpinnerField.RowMethodProperty)
+        final UrlMapping urlMapping = new UrlMapping(matchOrder: 1)
+        propertyMock.demand.getRow { urlMapping }
+        presenterMock.demand.incrementMatchOrder { UrlMapping mapping ->
+            assert mapping == urlMapping
+        }
+        final GroovyObject propertyMockInstance = propertyMock.proxyDelegateInstance(
+                [urlMapping, "matchOrder"] as Object[])
+        SpinnerField field = new SpinnerField(propertyMockInstance, presenterMock.createMock() as KikuyuPresenter)
 
         field.processClick(new SpinnerButton.ClickEvent(field, true))
 
-        mock.verify()
+        presenterMock.verify()
+        propertyMock.verify(propertyMockInstance)
     }
 
     @Test
-    public void testEventUpFromTop() throws Exception {
-        def mock = mockFor(KikuyuPresenter)
-        SpinnerField field = new SpinnerField(mock.createMock())
-        field.setValue(0)
+    public void testUpClickFromTop() throws Exception {
+        def presenterMock = mockFor(KikuyuPresenter)
+        def propertyMock = new MockFor(SpinnerField.RowMethodProperty)
+        final UrlMapping urlMapping = new UrlMapping(matchOrder: 0)
+
+        final GroovyObject propertyMockInstance = propertyMock.proxyDelegateInstance(
+                [urlMapping, "matchOrder"] as Object[])
+        SpinnerField field = new SpinnerField(propertyMockInstance, presenterMock.createMock() as KikuyuPresenter)
 
         field.processClick(new SpinnerButton.ClickEvent(field, true))
 
-        mock.verify()
+        presenterMock.verify()
+        propertyMock.verify(propertyMockInstance)
     }
 
     @Test
-    public void testEventDown() throws Exception {
-        def mock = mockFor(KikuyuPresenter)
-        mock.demand.decrementMatchOrder { UrlMapping mapping -> }
-        SpinnerField field = new SpinnerField(mock.createMock())
+    public void testDownClick() throws Exception {
+
+        def presenterMock = mockFor(KikuyuPresenter)
+        def propertyMock = new MockFor(SpinnerField.RowMethodProperty)
+        final UrlMapping urlMapping = new UrlMapping(matchOrder: 1)
+        propertyMock.demand.getRow { urlMapping }
+        presenterMock.demand.decrementMatchOrder { UrlMapping mapping ->
+            assert mapping == urlMapping
+        }
+        final GroovyObject propertyMockInstance = propertyMock.proxyDelegateInstance(
+                [urlMapping, "matchOrder"] as Object[])
+        SpinnerField field = new SpinnerField(propertyMockInstance, presenterMock.createMock() as KikuyuPresenter)
 
         field.processClick(new SpinnerButton.ClickEvent(field, false))
 
-        mock.verify()
+        presenterMock.verify()
+        propertyMock.verify(propertyMockInstance)
     }
 }
