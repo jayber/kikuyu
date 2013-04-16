@@ -21,15 +21,15 @@ class UrlMappingTableFieldFactory extends DefaultFieldFactory {
     Field createField(Container container, Object itemId, Object propertyId, Component uiContext) {
         if (currentSelectedItemId == itemId) {
             Field result = getPageComponent(propertyId)
-            result = result ?: getMatchOrderComponent(propertyId, itemId, container)
+            result = result ?: getMatchOrderComponent(propertyId, itemId, container, uiContext)
             return result ?: super.createField(container, itemId, propertyId, uiContext)
         }
         return null
     }
 
-    private Field getMatchOrderComponent(propertyId, itemId, container) {
+    private Field getMatchOrderComponent(propertyId, itemId, container, uiContext) {
         if (propertyId == "matchOrder") {
-            final SpinnerField field = new SpinnerField(new SpinnerField.RowMethodProperty(itemId, "matchOrder"), presenter, container)
+            final SpinnerField field = new SpinnerField(new SpinnerField.RowMethodProperty(itemId, "matchOrder"), presenter, container, uiContext)
             return field
         }
     }

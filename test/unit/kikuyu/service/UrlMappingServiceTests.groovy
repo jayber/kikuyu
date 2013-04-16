@@ -14,9 +14,14 @@ import org.junit.Before
 class UrlMappingServiceTests {
     private mock
 
+    def a = new UrlMapping(pattern: "a", matchOrder: 1)
+    def b = new UrlMapping(pattern: "b", matchOrder: 0)
+    private ArrayList<UrlMapping> mappings
+
     @Before
     public void setUp() throws Exception {
         mock = mockDomain(UrlMapping)
+        mappings = [a, b]
     }
 
     void testEmptyUrlMappings() {
@@ -24,11 +29,18 @@ class UrlMappingServiceTests {
     }
 
     void testTwoUrlMappings() {
-        final a = new UrlMapping(pattern: "a", matchOrder: 1)
-        final b = new UrlMapping(pattern: "b", matchOrder: 0)
-        mockDomain(UrlMapping, [a, b])
+        mockDomain(UrlMapping, mappings)
         final result = service.listUrlMappings()
         assert result[0] == b
         assert result[1] == a
+    }
+
+    public void testSwitchMatchOrder() throws Exception {
+
+        mockDomain(UrlMapping, mappings)
+        service.switchMatchOrder(a, b)
+        final result = service.listUrlMappings()
+        assert result[0] == a
+        assert result[1] == b
     }
 }

@@ -92,4 +92,26 @@ class SpinnerFieldTest {
         presenterMock.verify()
         propertyMock.verify(propertyMockInstance)
     }
+
+    @Test
+    public void testDownClickAtBottom() throws Exception {
+
+        def propertyMock = new MockFor(SpinnerField.RowMethodProperty)
+        final UrlMapping urlMapping = TestFixtures.urlMappings[2]
+
+        def presenterMock = mockFor(KikuyuPresenter)
+        def containerMock = mockFor(Container)
+        containerMock.demand.getItemIds {
+            TestFixtures.urlMappings
+        }
+
+        final GroovyObject propertyMockInstance = propertyMock.proxyDelegateInstance(
+                [urlMapping, "matchOrder"] as Object[])
+        SpinnerField field = new SpinnerField(propertyMockInstance, presenterMock.createMock(), containerMock.createMock())
+
+        field.processClick(new SpinnerButton.ClickEvent(field, false))
+
+        presenterMock.verify()
+        propertyMock.verify(propertyMockInstance)
+    }
 }

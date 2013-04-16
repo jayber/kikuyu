@@ -9,15 +9,7 @@ import kikuyu.view.SpinnerButton.ClickEvent
 class SpinnerField extends CustomField {
 
     private Container container
-    static class RowMethodProperty extends MethodProperty {
-        def row
-
-        RowMethodProperty(Object instance, String beanPropertyName) {
-            super(instance, beanPropertyName)
-            this.row = instance
-        }
-    }
-
+    private Table component
 
     KikuyuPresenter presenter
 
@@ -26,7 +18,8 @@ class SpinnerField extends CustomField {
     SpinnerField() {
     }
 
-    SpinnerField(Property property, KikuyuPresenter presenter, Container container) {
+    SpinnerField(Property property, KikuyuPresenter presenter, Container container, Component component) {
+        this.component = component
         this.container = container
         this.dataSource = property
         setPropertyDataSource(property)
@@ -61,16 +54,34 @@ class SpinnerField extends CustomField {
                 presenter.switchMatchOrder(dataSource.row, container.itemIds.find {
                     it.matchOrder == value.intValue() - 1
                 })
+                refreshTableData()
             }
         } else {
-            presenter.switchMatchOrder(container.itemIds.find {
+            final Object nextRow = container.itemIds.find {
                 it.matchOrder == value.intValue() + 1
-            }, dataSource.row)
+            }
+            if (nextRow != null) {
+                presenter.switchMatchOrder(nextRow, dataSource.row)
+                refreshTableData()
+            }
         }
+    }
+
+    private void refreshTableData() {
+        component.setContainerDataSource(presenter.tableDataSource)
     }
 
     @Override
     Class getType() {
         return Number
+    }
+
+    static class RowMethodProperty extends MethodProperty {
+        def row
+
+        RowMethodProperty(Object instance, String beanPropertyName) {
+            super(instance, beanPropertyName)
+            this.row = instance
+        }
     }
 }
