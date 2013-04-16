@@ -14,19 +14,19 @@ class KikuyuPresenterImplTest {
 
     KikuyuPresenterImpl target
 
-    MockFor service
+    MockFor urlMappingService
     MockFor pageService
 
     @Before
     public void setUp() throws Exception {
         target = new KikuyuPresenterImpl()
-        service = new MockFor(UrlMappingService)
+        urlMappingService = new MockFor(UrlMappingService)
         pageService = new MockFor(PageService)
     }
 
     void testGetTableDataSource() {
-        service.demand.listUrlMappings() { new ArrayList<UrlMapping>() }
-        target.urlMappingService = service.proxyDelegateInstance()
+        urlMappingService.demand.listUrlMappings() { new ArrayList<UrlMapping>() }
+        target.urlMappingService = urlMappingService.proxyDelegateInstance()
 
         final result = target.getTableDataSource()
         assert result instanceof NamedColumnContainer<UrlMapping>
@@ -39,5 +39,20 @@ class KikuyuPresenterImplTest {
         }
         target.pageService = pageService.proxyDelegateInstance()
         target.listPageOptions()
+    }
+
+    public void testSwitchMatchOrder() throws Exception {
+        UrlMapping mapping1 = new UrlMapping()
+        UrlMapping mapping2 = new UrlMapping()
+        urlMappingService.demand.switchMatchOrder() { UrlMapping urlMapping1, UrlMapping urlMapping2 ->
+            assert mapping1 == urlMapping1
+            assert mapping2 == urlMapping2
+        }
+
+        final instance = urlMappingService.proxyInstance()
+        target.urlMappingService = instance
+        target.switchMatchOrder(mapping1, mapping2)
+
+        urlMappingService.verify(instance)
     }
 }

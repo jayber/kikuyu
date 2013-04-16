@@ -9,7 +9,5 @@ public interface KikuyuPresenter {
 
     List<Page> listPageOptions()
 
-    void incrementMatchOrder(UrlMapping urlMapping)
-
-    void decrementMatchOrder(UrlMapping urlMapping)
+    void switchMatchOrder(UrlMapping firstUrlMapping, UrlMapping secondUrlMapping)
 }

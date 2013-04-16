@@ -10,4 +10,9 @@ class UrlMapping {
     String pattern
     Page page
     BigInteger matchOrder
+
+    @Override
+    String toString() {
+        "$pattern: $matchOrder"
+    }
 }

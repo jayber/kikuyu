@@ -1,5 +1,6 @@
 package kikuyu.view
 
+import com.vaadin.data.Container
 import com.vaadin.data.Property
 import com.vaadin.data.util.MethodProperty
 import com.vaadin.ui.*
@@ -7,6 +8,7 @@ import kikuyu.view.SpinnerButton.ClickEvent
 
 class SpinnerField extends CustomField {
 
+    private Container container
     static class RowMethodProperty extends MethodProperty {
         def row
 
@@ -24,7 +26,8 @@ class SpinnerField extends CustomField {
     SpinnerField() {
     }
 
-    SpinnerField(Property property, KikuyuPresenter presenter) {
+    SpinnerField(Property property, KikuyuPresenter presenter, Container container) {
+        this.container = container
         this.dataSource = property
         setPropertyDataSource(property)
         this.presenter = presenter
@@ -55,10 +58,14 @@ class SpinnerField extends CustomField {
         final BigInteger value = (BigInteger) getValue()
         if (event.up) {
             if (value.compareTo(0)) {
-                presenter.incrementMatchOrder(dataSource.row)
+                presenter.switchMatchOrder(dataSource.row, container.itemIds.find {
+                    it.matchOrder == value.intValue() - 1
+                })
             }
         } else {
-            presenter.decrementMatchOrder(dataSource.row)
+            presenter.switchMatchOrder(container.itemIds.find {
+                it.matchOrder == value.intValue() + 1
+            }, dataSource.row)
         }
     }
 

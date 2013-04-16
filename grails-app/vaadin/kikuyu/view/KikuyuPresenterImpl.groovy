@@ -20,4 +20,10 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
     List<Page> listPageOptions() {
         return pageService.listPages()
     }
+
+    @Override
+    void switchMatchOrder(UrlMapping firstUrlMapping, UrlMapping secondUrlMapping) {
+        urlMappingService.switchMatchOrder firstUrlMapping, secondUrlMapping
+    }
+
 }
