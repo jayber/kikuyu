@@ -1,5 +1,6 @@
 package kikuyu.view
 
+import com.vaadin.ui.Table
 import grails.test.mixin.TestMixin
 import grails.test.mixin.support.GrailsUnitTestMixin
 import groovy.mock.interceptor.MockFor
@@ -48,10 +49,14 @@ class KikuyuPresenterImplTest {
             assert mapping1 == urlMapping1
             assert mapping2 == urlMapping2
         }
+        urlMappingService.demand.listUrlMappings { [] }
+        final containerMockInstance = new NamedColumnContainer<UrlMapping>([], UrlMapping, "col")
+        def componentMock = mockFor(Table)
+        componentMock.demand.getContainerDataSource { containerMockInstance }
 
         final instance = urlMappingService.proxyInstance()
         target.urlMappingService = instance
-        target.switchMatchOrder(mapping1, mapping2)
+        target.switchMatchOrder(mapping1, mapping2, componentMock.createMock())
 
         urlMappingService.verify(instance)
     }

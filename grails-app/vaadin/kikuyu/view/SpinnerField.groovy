@@ -51,24 +51,19 @@ class SpinnerField extends CustomField {
         final BigInteger value = (BigInteger) getValue()
         if (event.up) {
             if (value.compareTo(0)) {
-                presenter.switchMatchOrder(dataSource.row, container.itemIds.find {
+                final prevRow = container.itemIds.find {
                     it.matchOrder == value.intValue() - 1
-                })
-                refreshTableData()
+                }
+                presenter.switchMatchOrder(dataSource.row, prevRow, component)
             }
         } else {
             final Object nextRow = container.itemIds.find {
                 it.matchOrder == value.intValue() + 1
             }
             if (nextRow != null) {
-                presenter.switchMatchOrder(nextRow, dataSource.row)
-                refreshTableData()
+                presenter.switchMatchOrder(nextRow, dataSource.row, component)
             }
         }
-    }
-
-    private void refreshTableData() {
-        component.setContainerDataSource(presenter.tableDataSource)
     }
 
     @Override
