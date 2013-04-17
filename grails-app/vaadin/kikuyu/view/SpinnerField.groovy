@@ -54,14 +54,14 @@ class SpinnerField extends CustomField {
                 final prevRow = container.itemIds.find {
                     it.matchOrder == value.intValue() - 1
                 }
-                presenter.switchMatchOrder(dataSource.row, prevRow, component)
+                presenter.switchMatchOrder(dataSource.row, prevRow, container)
             }
         } else {
             final Object nextRow = container.itemIds.find {
                 it.matchOrder == value.intValue() + 1
             }
             if (nextRow != null) {
-                presenter.switchMatchOrder(nextRow, dataSource.row, component)
+                presenter.switchMatchOrder(nextRow, dataSource.row, container)
             }
         }
     }

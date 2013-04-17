@@ -1,6 +1,6 @@
 package kikuyu.view
 
-import com.vaadin.ui.Table
+import com.vaadin.data.Container
 import kikuyu.domain.Page
 import kikuyu.domain.UrlMapping
 import kikuyu.service.PageService
@@ -22,13 +22,13 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
     }
 
     @Override
-    void switchMatchOrder(UrlMapping firstUrlMapping, UrlMapping secondUrlMapping, Table component) {
+    void switchMatchOrder(UrlMapping firstUrlMapping, UrlMapping secondUrlMapping, Container container) {
         urlMappingService.switchMatchOrder firstUrlMapping, secondUrlMapping
-        refreshTableData(component)
+        container.sort(["matchOrder"] as Object[], [true] as boolean[])
     }
 
-    private void refreshTableData(Table component) {
-        NamedColumnContainer dataSource = component.getContainerDataSource()
-        dataSource.sort(["matchOrder"] as Object[], [true] as boolean[])
+    @Override
+    void saveRow(UrlMapping urlMapping) {
+        urlMappingService.saveUrlMapping(urlMapping)
     }
 }

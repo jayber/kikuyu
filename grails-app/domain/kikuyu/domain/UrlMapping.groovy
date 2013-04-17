@@ -8,6 +8,10 @@ class UrlMapping {
         matchOrder unique: true, nullable: true
     }
 
+    static mapping = {
+        page fetch: 'join'
+    }
+
     String pattern
     Page page
     BigInteger matchOrder

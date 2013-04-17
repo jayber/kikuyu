@@ -36,7 +36,7 @@ class SpinnerFieldTest {
 
         final UrlMapping urlMapping = TestFixtures.urlMappings[1]
 
-        def field = createMocks urlMapping, { UrlMapping mapping1, UrlMapping mapping2, Table component ->
+        def field = createMocks urlMapping, { UrlMapping mapping1, UrlMapping mapping2, Container component ->
             assert mapping1 == urlMapping
             assert mapping2 == TestFixtures.urlMappings[0]
         }
@@ -61,7 +61,7 @@ class SpinnerFieldTest {
 
         final UrlMapping urlMapping = TestFixtures.urlMappings[1]
 
-        def field = createMocks urlMapping, { UrlMapping mapping1, UrlMapping mapping2, Table component ->
+        def field = createMocks urlMapping, { UrlMapping mapping1, UrlMapping mapping2, Container component ->
             assert mapping2 == urlMapping
             assert mapping1 == TestFixtures.urlMappings[2]
         }
