@@ -22,6 +22,9 @@ class UrlMapping {
 //  todo: all this is here just because the loading of page associations didn't seem to work by default
     Long pageId
 
+    UrlMapping() {
+    }
+
     UrlMapping(String pattern, Page page) {
         this.pattern = pattern
         this.page = page
@@ -48,10 +51,12 @@ class UrlMapping {
     }
 
     void setPage(Page page) {
-        pageId = page.id
+        pageId = page?.id
     }
 
     Page getPage() {
-        Page.get(pageId)
+        if (pageId != null) {
+            return Page.get(pageId)
+        }
     }
 }

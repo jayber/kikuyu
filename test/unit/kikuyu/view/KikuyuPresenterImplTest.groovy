@@ -59,4 +59,11 @@ class KikuyuPresenterImplTest {
 
         urlMappingService.verify(instance)
     }
+
+    public void testSaveRow() throws Exception {
+        urlMappingService.demand.saveUrlMapping() { UrlMapping urlMapping -> }
+        target.setUrlMappingService(urlMappingService.proxyInstance())
+        final UrlMapping mapping = new UrlMapping()
+        target.saveRow(mapping)
+    }
 }
