@@ -32,6 +32,7 @@ class KikuyuComponentTests {
     }
 
     void testComponentTree() {
+
         assert component.margin == new MarginInfo(true, true, true, true)
         assert component.spacing
 

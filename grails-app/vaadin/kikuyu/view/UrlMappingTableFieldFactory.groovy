@@ -22,29 +22,34 @@ class UrlMappingTableFieldFactory extends DefaultFieldFactory {
     @Override
     Field createField(Container container, Object itemId, Object propertyId, Component uiContext) {
         if (currentSelectedItemId == itemId) {
-            Field result = getPageComponent(propertyId, itemId)
-            result = result ?: getMatchOrderComponent(propertyId, itemId, container, uiContext)
-            return result ?: super.createField(container, itemId, propertyId, uiContext)
+            Field result = getIfPageComponent(propertyId, itemId)
+            if (result == null) {
+                result = getIfMatchOrderComponent(propertyId, itemId, container, uiContext)
+                result = result ?: super.createField(container, itemId, propertyId, uiContext)
+                result.addValueChangeListener({ Property.ValueChangeEvent evt ->
+                    presenter.saveRow(itemId)
+                } as Property.ValueChangeListener)
+                return result
+            }
+            return result
         }
         return null
     }
 
-    private Field getMatchOrderComponent(propertyId, itemId, container, uiContext) {
+    private Field getIfMatchOrderComponent(propertyId, itemId, container, uiContext) {
         if (propertyId == "matchOrder") {
             final SpinnerField field = new SpinnerField(new SpinnerField.RowMethodProperty(itemId, "matchOrder"), presenter, container, uiContext)
             return field
         }
     }
 
-    private Field getPageComponent(propertyId, itemId) {
+    private Field getIfPageComponent(propertyId, itemId) {
         if (propertyId == "page") {
-            final ComboBox box = new ComboBox(Grails.i18n("ui.urlmappingtable.page.select.caption"), presenter.listPageOptions())
+            final options = presenter.listPageOptions()
+            final ComboBox box = new ComboBox(Grails.i18n("ui.urlmappingtable.page.select.caption"), options)
             box.setPropertyDataSource(new MethodProperty(itemId, "page"))
             box.setWidth("100%")
             box.immediate = true
-            box.addValueChangeListener({ Property.ValueChangeEvent evt ->
-                presenter.saveRow(itemId)
-            } as Property.ValueChangeListener)
             return box
         }
     }

@@ -1,6 +1,7 @@
 package kikuyu.view
 
 import com.vaadin.data.Container
+import com.vaadin.grails.Grails
 import kikuyu.domain.Page
 import kikuyu.domain.UrlMapping
 import kikuyu.service.PageService
@@ -8,27 +9,24 @@ import kikuyu.service.UrlMappingService
 
 class KikuyuPresenterImpl implements KikuyuPresenter {
 
-    UrlMappingService urlMappingService
-    PageService pageService
-
     @Override
     NamedColumnContainer getTableDataSource() {
-        return new NamedColumnContainer<UrlMapping>(urlMappingService.listUrlMappings(), UrlMapping.class, "pattern", "page", "matchOrder")
+        return new NamedColumnContainer<UrlMapping>(Grails.get(UrlMappingService).listUrlMappings(), UrlMapping.class, "pattern", "page", "matchOrder")
     }
 
     @Override
     List<Page> listPageOptions() {
-        return pageService.listPages()
+        return Grails.get(PageService).listPages()
     }
 
     @Override
     void switchMatchOrder(UrlMapping firstUrlMapping, UrlMapping secondUrlMapping, Container container) {
-        urlMappingService.switchMatchOrder firstUrlMapping, secondUrlMapping
+        Grails.get(UrlMappingService).switchMatchOrder firstUrlMapping, secondUrlMapping
         container.sort(["matchOrder"] as Object[], [true] as boolean[])
     }
 
     @Override
     void saveRow(UrlMapping urlMapping) {
-        urlMappingService.saveUrlMapping(urlMapping)
+        Grails.get(UrlMappingService).saveUrlMapping(urlMapping)
     }
 }
