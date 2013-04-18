@@ -10,8 +10,8 @@ public class TestFixtures {
             new Page(name: "page3")
     ]
     public static ArrayList<UrlMapping> urlMappings = [
-            new UrlMapping(matchOrder: 0, pattern: "pattern0"),
-            new UrlMapping(matchOrder: 1, pattern: "pattern1"),
-            new UrlMapping(matchOrder: 2, pattern: "pattern2")
+            new UrlMapping(0, "pattern0"),
+            new UrlMapping(1, "pattern1"),
+            new UrlMapping(2, "pattern2")
     ]
 }

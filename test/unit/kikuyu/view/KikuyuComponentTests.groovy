@@ -23,8 +23,8 @@ class KikuyuComponentTests {
         mock = mockFor(KikuyuPresenter)
         mock.demand.getTableDataSource() {
             rows = [
-                    new UrlMapping(pattern: "a", matchOrder: 1),
-                    new UrlMapping(pattern: "b", matchOrder: 0)
+                    new UrlMapping(1, "a"),
+                    new UrlMapping(0, "b")
             ]
             new NamedColumnContainer<UrlMapping>(rows, UrlMapping, "pattern", "page", "matchOrder")
         }

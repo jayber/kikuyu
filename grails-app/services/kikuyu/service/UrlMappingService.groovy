@@ -21,7 +21,6 @@ class UrlMappingService {
     }
 
     void saveUrlMapping(UrlMapping urlMapping) {
-        urlMapping.attach()
         urlMapping.save(failOnError: true, flush: true)
     }
 }

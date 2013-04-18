@@ -1,10 +1,12 @@
 package kikuyu.domain
 
 class Page {
+    static mapWith = "mongo"
 
     static constraints = {
-        name nullable: false, blank: false
+        name nullable: false, blank: false, unique: true
     }
+
     String name
 
     @Override

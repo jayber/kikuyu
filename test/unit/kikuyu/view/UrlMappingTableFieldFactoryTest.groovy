@@ -25,8 +25,8 @@ class UrlMappingTableFieldFactoryTest {
     }
 
     public void testOnlyEditCurrentRow() throws Exception {
-        final UrlMapping notCurrentItemId = new UrlMapping(pattern: "test", page: new Page(name: "page"))
-        final UrlMapping currentItemId = new UrlMapping(pattern: "test1", page: new Page(name: "page1"))
+        final UrlMapping notCurrentItemId = new UrlMapping("test", new Page(name: "page"))
+        final UrlMapping currentItemId = new UrlMapping("test1", new Page(name: "page1"))
         factory.currentSelectedItemId = currentItemId
 
         assert factory.createField(null, notCurrentItemId, "page", null) == null
@@ -52,7 +52,7 @@ class UrlMappingTableFieldFactoryTest {
     }
 
     private UrlMapping setUpRow() {
-        final UrlMapping currentItemId = new UrlMapping(pattern: "test1", page: new Page(name: "page1"), matchOrder: 0)
+        final UrlMapping currentItemId = new UrlMapping("test1", 0, new Page(name: "page1"))
         factory.currentSelectedItemId = currentItemId
         currentItemId
     }

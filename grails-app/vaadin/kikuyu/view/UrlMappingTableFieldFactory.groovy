@@ -29,6 +29,7 @@ class UrlMappingTableFieldFactory extends DefaultFieldFactory {
                 result.addValueChangeListener({ Property.ValueChangeEvent evt ->
                     presenter.saveRow(itemId)
                 } as Property.ValueChangeListener)
+                result.immediate = true
                 return result
             }
             return result

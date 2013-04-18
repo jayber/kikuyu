@@ -14,8 +14,8 @@ import org.junit.Before
 class UrlMappingServiceTests {
     private mock
 
-    def a = new UrlMapping(pattern: "a", matchOrder: 1)
-    def b = new UrlMapping(pattern: "b", matchOrder: 0)
+    def a = new UrlMapping(1, "a")
+    def b = new UrlMapping(0, "b")
     private ArrayList<UrlMapping> mappings
 
     @Before
