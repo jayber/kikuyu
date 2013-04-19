@@ -1,6 +1,8 @@
 package kikuyu.view
 
 import com.vaadin.data.Container
+import com.vaadin.navigator.Navigator
+import com.vaadin.ui.Table
 import kikuyu.domain.Page
 import kikuyu.domain.UrlMapping
 import kikuyu.service.PageService
@@ -10,13 +12,20 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
 
     UrlMappingService urlMappingService
     PageService pageService
+    Navigator navigator
 
     @Override
-    NamedColumnContainer getTableDataSource() {
+    NamedColumnContainer getUrlMappingTableDataSource() {
         final container = new NamedColumnContainer<UrlMapping>(urlMappingService.listUrlMappings(),
                 UrlMapping.class, "pattern", "page", "matchOrder")
         container.sort(["matchOrder"] as Object[], [true] as boolean[])
         return container
+    }
+
+    @Override
+    Container getPageTableDataSource() {
+        return new NamedColumnContainer<UrlMapping>(pageService.listPages(),
+                Page, "name", "url")
     }
 
     @Override
@@ -33,5 +42,24 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
     @Override
     void saveRow(UrlMapping urlMapping) {
         urlMappingService.saveUrlMapping(urlMapping)
+    }
+
+    @Override
+    void handleUrlMappingTableClick(def event, UrlMappingTableFieldFactory factory, Table urlMappingTable) {
+        if (event.isDoubleClick()) {
+            factory.currentSelectedItemId = event.itemId
+            urlMappingTable.setEditable(true)
+        }
+    }
+
+    @Override
+    void showEditPage(Page page) {
+        navigator.addView("pageEditor", new EditPageView(this, page))
+        navigator.navigateTo("pageEditor")
+    }
+
+    @Override
+    void savePage(Page page) {
+        pageService.savePage(page)
     }
 }

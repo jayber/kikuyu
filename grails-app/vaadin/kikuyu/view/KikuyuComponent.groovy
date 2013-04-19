@@ -1,18 +1,23 @@
 package kikuyu.view
 
-import com.vaadin.event.ItemClickEvent
 import com.vaadin.grails.Grails
-import com.vaadin.ui.*
+import com.vaadin.navigator.Navigator
+import com.vaadin.ui.Component
+import com.vaadin.ui.Label
+import com.vaadin.ui.UI
+import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.Runo
 
 class KikuyuComponent extends VerticalLayout {
 
     KikuyuPresenter presenter
+    UI ui
+    private Navigator navigator
 
-    KikuyuComponent(KikuyuPresenter presenter) {
+    KikuyuComponent(KikuyuPresenter presenter, UI ui) {
+        this.ui = ui
         this.presenter = presenter
         setSpacing(true)
-        setMargin(true)
         buildComponents()
     }
 
@@ -26,11 +31,12 @@ class KikuyuComponent extends VerticalLayout {
     }
 
     private buildHeader() {
-        def titleBar = new VerticalLayout()
+        final layout = new VerticalLayout()
 
-        titleBar.addComponent(buildPageTitle())
+        layout.addComponent(buildPageTitle())
 
-        return titleBar
+        layout.setMargin(true)
+        return layout
     }
 
     private Component buildPageTitle() {
@@ -41,46 +47,13 @@ class KikuyuComponent extends VerticalLayout {
     }
 
     private Component buildBody() {
-        final layout = new VerticalLayout()
-        layout.spacing = true
 
-        layout.addComponent(buildDescription())
+        VerticalLayout container = new VerticalLayout()
 
-        layout.addComponent(buildTabs())
+        def navigator = new Navigator(ui, container)
+        presenter.navigator = navigator
+        navigator.addView("", new DataTablesView(presenter))
 
-        return layout
-    }
-
-    private Component buildDescription() {
-        String homeLabel = Grails.i18n("default.description.label")
-        Label label = new Label(homeLabel)
-        return label
-    }
-
-    private Component buildTabs() {
-        final sheet = new TabSheet()
-        Table urlMappingTable = buildUrlMappingTable()
-        final tab = sheet.addTab(urlMappingTable, Grails.i18n("default.urlMappingTab.label"))
-        urlMappingTable.setSizeFull()
-        return sheet
-    }
-
-    private Table buildUrlMappingTable() {
-        final Table urlMappingTable = new Table()
-        final factory = new UrlMappingTableFieldFactory(presenter: presenter)
-        urlMappingTable.setTableFieldFactory(factory)
-        urlMappingTable.setContainerDataSource(presenter.tableDataSource)
-
-        urlMappingTable.addItemClickListener({ ItemClickEvent event ->
-            tableClickEventHandler(event, factory, urlMappingTable)
-        } as ItemClickEvent.ItemClickListener)
-        return urlMappingTable
-    }
-
-    def tableClickEventHandler = { event, factory, urlMappingTable ->
-        if (event.isDoubleClick()) {
-            factory.currentSelectedItemId = event.itemId
-            urlMappingTable.setEditable(true)
-        }
+        return container
     }
 }

@@ -7,4 +7,8 @@ class PageService {
     List<Page> listPages() {
         Page.listOrderByName()
     }
+
+    void savePage(Page page) {
+        page.save(flush: true, failOnError: true)
+    }
 }

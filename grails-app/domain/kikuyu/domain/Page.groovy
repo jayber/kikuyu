@@ -5,9 +5,11 @@ class Page {
 
     static constraints = {
         name nullable: false, blank: false, unique: true
+        url nullable: true, blank: true
     }
 
     String name
+    String url
 
     @Override
     String toString() {

@@ -16,11 +16,6 @@ class SpinnerButton extends VerticalLayout {
         initContent()
     }
 
-    SpinnerButton(Component... children) {
-        super(children)
-        initContent()
-    }
-
     protected void initContent() {
         createButton(UP_ARROW)
         createButton(DOWN_ARROW)
