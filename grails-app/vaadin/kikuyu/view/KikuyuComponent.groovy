@@ -1,7 +1,6 @@
 package kikuyu.view
 
 import com.vaadin.grails.Grails
-import com.vaadin.navigator.Navigator
 import com.vaadin.ui.Component
 import com.vaadin.ui.Label
 import com.vaadin.ui.UI
@@ -12,7 +11,6 @@ class KikuyuComponent extends VerticalLayout {
 
     KikuyuPresenter presenter
     UI ui
-    private Navigator navigator
 
     KikuyuComponent(KikuyuPresenter presenter, UI ui) {
         this.ui = ui
@@ -46,7 +44,7 @@ class KikuyuComponent extends VerticalLayout {
         String homeLabel = Grails.i18n("default.home.label")
         Label label = new Label(homeLabel)
         label.styleName = Runo.LABEL_H1
-        label.addStyleName("kikuyu-header")
+        label.addStyleName("kikuyu-header-label")
         return label
     }
 

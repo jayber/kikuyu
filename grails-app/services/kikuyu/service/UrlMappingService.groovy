@@ -23,4 +23,8 @@ class UrlMappingService {
     void saveUrlMapping(UrlMapping urlMapping) {
         urlMapping.save(failOnError: true, flush: true)
     }
+
+    UrlMapping findByPattern(String pattern) {
+        UrlMapping.findByPattern(pattern)
+    }
 }
