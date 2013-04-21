@@ -3,6 +3,8 @@ package kikuyu.view
 import com.vaadin.data.Container
 import com.vaadin.navigator.Navigator
 import com.vaadin.ui.Table
+import com.vaadin.ui.UI
+import com.vaadin.ui.VerticalLayout
 import kikuyu.domain.Page
 import kikuyu.domain.UrlMapping
 
@@ -27,4 +29,6 @@ public interface KikuyuPresenter {
     void showEditPage(Page page)
 
     void savePage(Page page)
+
+    void buildNavigator(VerticalLayout layout, UI ui)
 }

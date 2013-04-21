@@ -3,6 +3,8 @@ package kikuyu.view
 import com.vaadin.data.Container
 import com.vaadin.navigator.Navigator
 import com.vaadin.ui.Table
+import com.vaadin.ui.UI
+import com.vaadin.ui.VerticalLayout
 import kikuyu.domain.Page
 import kikuyu.domain.UrlMapping
 import kikuyu.service.PageService
@@ -61,5 +63,12 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
     @Override
     void savePage(Page page) {
         pageService.savePage(page)
+    }
+
+    @Override
+    void buildNavigator(VerticalLayout layout, UI ui) {
+        def navigator = new Navigator(ui, layout)
+        this.navigator = navigator
+        navigator.addView("", new DataTablesView(this))
     }
 }

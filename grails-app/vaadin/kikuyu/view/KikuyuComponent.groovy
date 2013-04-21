@@ -32,8 +32,11 @@ class KikuyuComponent extends VerticalLayout {
 
     private buildHeader() {
         final layout = new VerticalLayout()
+        layout.setStyleName("kikuyu-header")
 
         layout.addComponent(buildPageTitle())
+
+        layout.addComponent(buildDescription())
 
         layout.setMargin(true)
         return layout
@@ -43,17 +46,20 @@ class KikuyuComponent extends VerticalLayout {
         String homeLabel = Grails.i18n("default.home.label")
         Label label = new Label(homeLabel)
         label.styleName = Runo.LABEL_H1
+        label.addStyleName("kikuyu-header")
+        return label
+    }
+
+    private Component buildDescription() {
+        String homeLabel = Grails.i18n("default.description.label")
+        Label label = new Label(homeLabel)
         return label
     }
 
     private Component buildBody() {
 
         VerticalLayout container = new VerticalLayout()
-
-        def navigator = new Navigator(ui, container)
-        presenter.navigator = navigator
-        navigator.addView("", new DataTablesView(presenter))
-
+        presenter.buildNavigator(container, ui)
         return container
     }
 }

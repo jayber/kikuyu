@@ -4,7 +4,10 @@ import com.vaadin.event.ItemClickEvent
 import com.vaadin.grails.Grails
 import com.vaadin.navigator.View
 import com.vaadin.navigator.ViewChangeListener
-import com.vaadin.ui.*
+import com.vaadin.ui.Component
+import com.vaadin.ui.TabSheet
+import com.vaadin.ui.Table
+import com.vaadin.ui.VerticalLayout
 
 class DataTablesView extends VerticalLayout implements View {
 
@@ -14,8 +17,6 @@ class DataTablesView extends VerticalLayout implements View {
         this.presenter = presenter
         spacing = true
 
-        addComponent(buildDescription())
-
         addComponent(buildTabs())
 
         setMargin(true)
@@ -24,12 +25,6 @@ class DataTablesView extends VerticalLayout implements View {
     @Override
     void enter(ViewChangeListener.ViewChangeEvent event) {
 
-    }
-
-    private Component buildDescription() {
-        String homeLabel = Grails.i18n("default.description.label")
-        Label label = new Label(homeLabel)
-        return label
     }
 
     private Component buildTabs() {

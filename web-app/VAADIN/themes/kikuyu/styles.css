@@ -1,0 +1,10 @@
+@import "../runo/legacy-styles.css";
+
+.v-slot-kikuyu-header {
+    background: #ffffff;
+    border-bottom: 2px solid #bbbbbb;
+}
+
+.v-label-kikuyu-header {
+    color: #ee5311;
+}

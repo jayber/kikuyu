@@ -6,7 +6,7 @@ import com.vaadin.server.Page
 import com.vaadin.server.VaadinRequest
 import com.vaadin.ui.UI
 
-@Theme("runo")
+@Theme("kikuyu")
 class KikuyuUI extends UI {
 
     @Override
