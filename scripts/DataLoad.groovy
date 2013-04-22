@@ -1,6 +1,9 @@
 import kikuyu.domain.Page
 import kikuyu.domain.UrlMapping
 
+//run this script with the run-script grails command to get full GORM access, i.e.:
+//run-script scripts\DataLoad.groovy
+
 def blank = new Page(name: "blank").save(failOnError: true)
 def home = new Page(name: "home").save(failOnError: true)
 def userAccount = new Page(name: "userAccount").save(failOnError: true)

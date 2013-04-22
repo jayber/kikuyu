@@ -9,6 +9,6 @@ class UrlMappingController {
     static scaffold = UrlMapping
 
     def GET(String pattern) {
-        render urlMappingService.findByPattern(pattern).page.url
+        render urlMappingService.findByPattern(pattern)?.page?.url
     }
 }

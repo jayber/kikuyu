@@ -13,6 +13,10 @@ class DataTablesView extends VerticalLayout implements View {
 
     KikuyuPresenter presenter
 
+    private Table pageTable
+
+    private Table urlMappingTable
+
     DataTablesView(KikuyuPresenter presenter) {
         this.presenter = presenter
         spacing = true
@@ -24,7 +28,8 @@ class DataTablesView extends VerticalLayout implements View {
 
     @Override
     void enter(ViewChangeListener.ViewChangeEvent event) {
-
+        pageTable.markAsDirtyRecursive()
+        urlMappingTable.markAsDirtyRecursive()
     }
 
     private Component buildTabs() {
@@ -35,7 +40,7 @@ class DataTablesView extends VerticalLayout implements View {
     }
 
     private buildPageTable(TabSheet sheet) {
-        final Table pageTable = new Table()
+        pageTable = new Table()
         pageTable.setSizeFull()
         pageTable.setContainerDataSource(presenter.pageTableDataSource)
 
@@ -47,7 +52,7 @@ class DataTablesView extends VerticalLayout implements View {
     }
 
     private Table buildUrlMappingTable(TabSheet sheet) {
-        final Table urlMappingTable = new Table()
+        urlMappingTable = new Table()
         urlMappingTable.setSizeFull()
         final factory = new UrlMappingTableFieldFactory(presenter: presenter)
         urlMappingTable.setTableFieldFactory(factory)

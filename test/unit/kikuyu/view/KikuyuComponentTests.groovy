@@ -56,7 +56,7 @@ class KikuyuComponentTests {
         assert component.getExpandRatio(titleBar) == 0
         final title = titleBar.getComponent(0)
         assert title.value == "[default.home.label]"
-        assert title.styleName == "$Runo.LABEL_H1 kikuyu-header"
+        assert title.styleName == "$Runo.LABEL_H1 kikuyu-header-label"
 
 
         final description = titleBar.getComponent(1)

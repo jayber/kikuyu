@@ -26,12 +26,11 @@ class UrlMappingTableFieldFactory extends DefaultFieldFactory {
             if (result == null) {
                 result = getIfMatchOrderComponent(propertyId, itemId, container, uiContext)
                 result = result ?: super.createField(container, itemId, propertyId, uiContext)
-                result.addValueChangeListener({ Property.ValueChangeEvent evt ->
-                    presenter.saveRow(itemId)
-                } as Property.ValueChangeListener)
-                result.immediate = true
-                return result
             }
+            result.addValueChangeListener({ Property.ValueChangeEvent evt ->
+                presenter.saveRow(itemId)
+            } as Property.ValueChangeListener)
+            result.immediate = true
             return result
         }
         return null
