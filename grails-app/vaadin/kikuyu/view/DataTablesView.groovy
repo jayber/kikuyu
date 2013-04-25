@@ -20,10 +20,9 @@ class DataTablesView extends VerticalLayout implements View {
     DataTablesView(KikuyuPresenter presenter) {
         this.presenter = presenter
         spacing = true
+        setMargin(true)
 
         addComponent(buildTabs())
-
-        setMargin(true)
     }
 
     @Override

@@ -31,12 +31,10 @@ class KikuyuComponent extends VerticalLayout {
     private buildHeader() {
         final layout = new VerticalLayout()
         layout.setStyleName("kikuyu-header")
+        layout.setMargin(true)
 
         layout.addComponent(buildPageTitle())
-
         layout.addComponent(buildDescription())
-
-        layout.setMargin(true)
         return layout
     }
 
@@ -55,7 +53,6 @@ class KikuyuComponent extends VerticalLayout {
     }
 
     private Component buildBody() {
-
         VerticalLayout container = new VerticalLayout()
         presenter.buildNavigator(container, ui)
         return container
