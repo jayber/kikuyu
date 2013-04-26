@@ -2,7 +2,7 @@ class UrlMappings {
 
     static mappings = {
 
-        "/ws/urlMapping/$pattern/page/url"(controller: "urlMapping") {
+        "/ws/urlMappings"(controller: "urlMappings") {
             action = [GET: "GET"]
         }
         "/$controller/$action?/$id?" {
