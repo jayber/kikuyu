@@ -7,6 +7,6 @@ class UrlMappingsController {
 
     def GET() {
         JSON.use('deep')
-        render UrlMapping.listOrderByMatchOrder().encodeAsJSON()
+        render(contentType: "application/json", text: UrlMapping.listOrderByMatchOrder().encodeAsJSON())
     }
 }
