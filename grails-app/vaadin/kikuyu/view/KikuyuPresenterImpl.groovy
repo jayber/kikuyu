@@ -1,6 +1,7 @@
 package kikuyu.view
 
 import com.vaadin.data.Container
+import com.vaadin.event.ItemClickEvent
 import com.vaadin.navigator.Navigator
 import com.vaadin.ui.Table
 import com.vaadin.ui.UI
@@ -51,6 +52,8 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
         if (event.isDoubleClick()) {
             factory.currentSelectedItemId = event.itemId
             urlMappingTable.setEditable(true)
+        } else {
+            urlMappingTable.setEditable(false)
         }
     }
 
@@ -70,5 +73,12 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
         def navigator = new Navigator(ui, layout)
         this.navigator = navigator
         navigator.addView("", new DataTablesView(this))
+    }
+
+    @Override
+    void handlePageTableEvent(ItemClickEvent event) {
+        if (event.isDoubleClick()) {
+            showEditPage(event.itemId)
+        }
     }
 }

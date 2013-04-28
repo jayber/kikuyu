@@ -18,16 +18,20 @@ class EditPageView extends FormLayout implements View {
         this.presenter = kikuyuPresenter
         setMargin(true)
         setSpacing(true)
+
+        createForm()
     }
 
-    @Override
-    void enter(ViewChangeListener.ViewChangeEvent event) {
+    private void createForm() {
         FieldGroup binder = new FieldGroup(new BeanItem(page));
 
         addComponent(binder.buildAndBind("Name", "name"));
-        addComponent(binder.buildAndBind("URL", "url"));
+        addComponent(binder.buildAndBind("Template URL", "url"));
+        addComponent(binder.buildAndBind("Component URL", "componentUrl"));
 
         binder.fields.each {
+            it.width = 500
+            it.nullRepresentation = ""
             it.immediate = true
             it.addValueChangeListener({
                 binder.commit()
@@ -36,5 +40,9 @@ class EditPageView extends FormLayout implements View {
         }
 
         addComponent(new Button("done", { presenter.navigator.navigateTo("") } as Button.ClickListener))
+    }
+
+    @Override
+    void enter(ViewChangeListener.ViewChangeEvent event) {
     }
 }

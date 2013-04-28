@@ -1,6 +1,7 @@
 package kikuyu.view
 
 import com.vaadin.data.Container
+import com.vaadin.event.ItemClickEvent
 import com.vaadin.navigator.Navigator
 import com.vaadin.ui.Table
 import com.vaadin.ui.UI
@@ -31,4 +32,6 @@ public interface KikuyuPresenter {
     void savePage(Page page)
 
     void buildNavigator(VerticalLayout layout, UI ui)
+
+    void handlePageTableEvent(ItemClickEvent event)
 }

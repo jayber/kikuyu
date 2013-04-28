@@ -6,10 +6,12 @@ class Page {
     static constraints = {
         name nullable: false, blank: false, unique: true
         url nullable: true, blank: true
+        componentUrl nullable: true, blank: true
     }
 
     String name
     String url
+    String componentUrl
 
     @Override
     String toString() {

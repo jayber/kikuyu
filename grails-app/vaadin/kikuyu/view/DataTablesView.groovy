@@ -44,7 +44,7 @@ class DataTablesView extends VerticalLayout implements View {
         pageTable.setContainerDataSource(presenter.pageTableDataSource)
 
         pageTable.addItemClickListener({ ItemClickEvent event ->
-            presenter.showEditPage(event.itemId)
+            presenter.handlePageTableEvent(event)
         } as ItemClickEvent.ItemClickListener)
 
         sheet.addTab(pageTable, Grails.i18n("default.pageTab.label"))
