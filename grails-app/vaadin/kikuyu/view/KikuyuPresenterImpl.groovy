@@ -28,7 +28,7 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
     @Override
     Container getPageTableDataSource() {
         return new NamedColumnContainer<UrlMapping>(pageService.listPages(),
-                Page, "name", "url")
+                Page, "name")
     }
 
     @Override

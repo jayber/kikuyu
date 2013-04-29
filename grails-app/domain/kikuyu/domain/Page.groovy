@@ -5,13 +5,12 @@ class Page {
 
     static constraints = {
         name nullable: false, blank: false, unique: true
-        url nullable: true, blank: true
-        componentUrl nullable: true, blank: true
     }
 
+    static embedded = ['pageComponents']
+
     String name
-    String url
-    String componentUrl
+    List<PageComponent> pageComponents = []
 
     @Override
     String toString() {

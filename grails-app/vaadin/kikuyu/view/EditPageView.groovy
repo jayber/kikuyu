@@ -1,15 +1,15 @@
 package kikuyu.view
 
 import com.vaadin.data.Property
-import com.vaadin.data.fieldgroup.FieldGroup
-import com.vaadin.data.util.BeanItem
+import com.vaadin.data.util.MethodProperty
 import com.vaadin.navigator.View
 import com.vaadin.navigator.ViewChangeListener
-import com.vaadin.ui.Button
-import com.vaadin.ui.FormLayout
+import com.vaadin.ui.*
+import com.vaadin.ui.themes.Runo
 import kikuyu.domain.Page
+import kikuyu.domain.PageComponent
 
-class EditPageView extends FormLayout implements View {
+class EditPageView extends VerticalLayout implements View {
     private KikuyuPresenter presenter
     private Page page
 
@@ -23,23 +23,44 @@ class EditPageView extends FormLayout implements View {
     }
 
     private void createForm() {
-        FieldGroup binder = new FieldGroup(new BeanItem(page));
+        final FormLayout layout = new FormLayout()
+        addComponent(layout)
 
-        addComponent(binder.buildAndBind("Name", "name"));
-        addComponent(binder.buildAndBind("Template URL", "url"));
-        addComponent(binder.buildAndBind("Component URL", "componentUrl"));
+        TextField field = new TextField("Name", new MethodProperty(page, "name"))
+        layout.addComponent(field);
+        setUpField(field)
 
-        binder.fields.each {
-            it.width = 500
-            it.nullRepresentation = ""
-            it.immediate = true
-            it.addValueChangeListener({
-                binder.commit()
-                presenter.savePage(page)
-            } as Property.ValueChangeListener)
+        for (PageComponent pageComponent : page.pageComponents) {
+            createNewPageComponentField(pageComponent, layout)
         }
 
+        final Button addComponentButton = new Button("add component", {
+            final PageComponent pageComponent = new PageComponent()
+            page.pageComponents.add(pageComponent)
+            createNewPageComponentField(pageComponent, layout)
+        } as Button.ClickListener)
+        addComponentButton.setStyleName(Runo.BUTTON_SMALL)
+        layout.setComponentAlignment(addComponentButton, Alignment.BOTTOM_RIGHT)
+        addComponent(addComponentButton)
+
         addComponent(new Button("done", { presenter.navigator.navigateTo("") } as Button.ClickListener))
+    }
+
+    private void createNewPageComponentField(PageComponent pageComponent, FormLayout layout) {
+        TextField field = new TextField("Component URL", new MethodProperty(pageComponent, "url"));
+
+        layout.addComponent(field);
+        setUpField(field)
+    }
+
+    private void setUpField(Field field) {
+        field.width = 500
+        field.nullRepresentation = ""
+        field.immediate = true
+        field.addValueChangeListener({
+            field.commit()
+            presenter.savePage(page)
+        } as Property.ValueChangeListener)
     }
 
     @Override

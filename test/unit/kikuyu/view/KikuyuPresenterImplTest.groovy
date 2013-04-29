@@ -103,7 +103,7 @@ class KikuyuPresenterImplTest {
 
         final pages = target.pageTableDataSource
         assert pages instanceof NamedColumnContainer<Page>
-        assert pages.containerPropertyIds == ["name", "url"]
+        assert pages.containerPropertyIds == ["name"]
         //todo: same problem!! no idea why this fails
 //        assert pages.itemIds == TestFixtures.pages
 
