@@ -4,6 +4,7 @@ import com.vaadin.data.Property
 import com.vaadin.data.util.MethodProperty
 import com.vaadin.navigator.View
 import com.vaadin.navigator.ViewChangeListener
+import com.vaadin.server.ThemeResource
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.Runo
 import kikuyu.domain.Page
@@ -40,7 +41,6 @@ class EditPageView extends VerticalLayout implements View {
             createNewPageComponentField(pageComponent, layout)
         } as Button.ClickListener)
         addComponentButton.setStyleName(Runo.BUTTON_SMALL)
-        layout.setComponentAlignment(addComponentButton, Alignment.BOTTOM_RIGHT)
         addComponent(addComponentButton)
 
         addComponent(new Button("done", { presenter.navigator.navigateTo("") } as Button.ClickListener))
@@ -49,7 +49,20 @@ class EditPageView extends VerticalLayout implements View {
     private void createNewPageComponentField(PageComponent pageComponent, FormLayout layout) {
         TextField field = new TextField("Component URL", new MethodProperty(pageComponent, "url"));
 
-        layout.addComponent(field);
+        final HorizontalLayout fieldLayout = new HorizontalLayout(field)
+        fieldLayout.spacing = true
+        final Button removeButton = new Button("", {
+            layout.removeComponent(fieldLayout)
+            page.pageComponents.remove(pageComponent)
+        } as Button.ClickListener)
+        removeButton.setStyleName(Runo.BUTTON_LINK)
+        removeButton.setIcon(new ThemeResource("minus_sign.png"))
+        removeButton.description = "remove component"
+
+        fieldLayout.addComponent(removeButton)
+        fieldLayout.setComponentAlignment(removeButton, Alignment.BOTTOM_RIGHT)
+
+        layout.addComponent(fieldLayout);
         setUpField(field)
     }
 

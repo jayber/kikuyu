@@ -3,14 +3,19 @@ package kikuyu.domain
 class Page {
     static mapWith = "mongo"
 
+    static hasMany = [pageComponents: PageComponent]
+
     static constraints = {
         name nullable: false, blank: false, unique: true
+    }
+
+    static mappings = {
+        pageComponents lazy: false
     }
 
     static embedded = ['pageComponents']
 
     String name
-    List<PageComponent> pageComponents = []
 
     @Override
     String toString() {
