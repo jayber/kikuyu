@@ -37,4 +37,11 @@ class Page {
     int hashCode() {
         return (id != null ? id.hashCode() : 0)
     }
+
+    def addPageComponent(PageComponent pageComponent) {
+        if (pageComponents == null) {
+            pageComponents = []
+        }
+        pageComponents.add(pageComponent)
+    }
 }

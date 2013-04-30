@@ -37,7 +37,7 @@ class EditPageView extends VerticalLayout implements View {
 
         final Button addComponentButton = new Button("add component", {
             final PageComponent pageComponent = new PageComponent()
-            page.pageComponents.add(pageComponent)
+            page.addPageComponent(pageComponent)
             createNewPageComponentField(pageComponent, layout)
         } as Button.ClickListener)
         addComponentButton.setStyleName(Runo.BUTTON_SMALL)

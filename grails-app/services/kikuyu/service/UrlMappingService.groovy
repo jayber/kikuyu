@@ -5,7 +5,7 @@ import kikuyu.domain.UrlMapping
 class UrlMappingService {
 
     List<UrlMapping> listUrlMappings() {
-        return UrlMapping.listOrderByMatchOrder()
+        return UrlMapping.listOrderByMatchOrder().sort({ it1, it2 -> it1.matchOrder.compareTo(it2.matchOrder) })
     }
 
     void switchMatchOrder(UrlMapping firstUrlMapping, UrlMapping secondUrlMapping) {
@@ -26,5 +26,9 @@ class UrlMappingService {
 
     UrlMapping findByPattern(String pattern) {
         UrlMapping.findByPattern(pattern)
+    }
+
+    BigInteger findLastMatchOrder() {
+        listUrlMappings().last().matchOrder
     }
 }

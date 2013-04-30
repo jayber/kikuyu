@@ -81,4 +81,16 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
             showEditPage(event.itemId)
         }
     }
+
+    def createNewPage = {
+        showEditPage(new Page())
+    }
+
+    def createNewUrlMapping = { urlMappingTable, factory ->
+        final UrlMapping mapping = new UrlMapping(pattern: "new pattern")
+        mapping.matchOrder = urlMappingService.findLastMatchOrder() + 1
+        urlMappingTable.addItem(mapping);
+        factory.currentSelectedItemId = mapping
+        urlMappingTable.setEditable(true)
+    }
 }

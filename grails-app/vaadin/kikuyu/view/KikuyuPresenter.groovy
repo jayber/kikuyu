@@ -34,4 +34,5 @@ public interface KikuyuPresenter {
     void buildNavigator(VerticalLayout layout, UI ui)
 
     void handlePageTableEvent(ItemClickEvent event)
+
 }

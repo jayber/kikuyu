@@ -4,10 +4,8 @@ import com.vaadin.event.ItemClickEvent
 import com.vaadin.grails.Grails
 import com.vaadin.navigator.View
 import com.vaadin.navigator.ViewChangeListener
-import com.vaadin.ui.Component
-import com.vaadin.ui.TabSheet
-import com.vaadin.ui.Table
-import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.*
+import com.vaadin.ui.themes.Runo
 
 class DataTablesView extends VerticalLayout implements View {
 
@@ -39,6 +37,8 @@ class DataTablesView extends VerticalLayout implements View {
     }
 
     private buildPageTable(TabSheet sheet) {
+        final VerticalLayout layout = new VerticalLayout()
+        layout.setStyleName(Runo.LAYOUT_DARKER)
         pageTable = new Table()
         pageTable.setSizeFull()
         pageTable.setContainerDataSource(presenter.pageTableDataSource)
@@ -47,10 +47,15 @@ class DataTablesView extends VerticalLayout implements View {
             presenter.handlePageTableEvent(event)
         } as ItemClickEvent.ItemClickListener)
 
-        sheet.addTab(pageTable, Grails.i18n("default.pageTab.label"))
+        layout.addComponent(pageTable)
+        final Button button = new Button("new", presenter.createNewPage as Button.ClickListener)
+        layout.addComponent(button)
+        sheet.addTab(layout, Grails.i18n("default.pageTab.label"))
     }
 
-    private Table buildUrlMappingTable(TabSheet sheet) {
+    private void buildUrlMappingTable(TabSheet sheet) {
+        final VerticalLayout layout = new VerticalLayout()
+        layout.setStyleName(Runo.LAYOUT_DARKER)
         urlMappingTable = new Table()
         urlMappingTable.setSizeFull()
         final factory = new UrlMappingTableFieldFactory(presenter: presenter)
@@ -61,7 +66,9 @@ class DataTablesView extends VerticalLayout implements View {
             presenter.handleUrlMappingTableClick(event, factory, urlMappingTable)
         } as ItemClickEvent.ItemClickListener)
 
-        sheet.addTab(urlMappingTable, Grails.i18n("default.urlMappingTab.label"))
-        return urlMappingTable
+        layout.addComponent(urlMappingTable)
+        final Button button = new Button("new", { presenter.createNewUrlMapping(urlMappingTable, factory) } as Button.ClickListener)
+        layout.addComponent(button)
+        sheet.addTab(layout, Grails.i18n("default.urlMappingTab.label"))
     }
 }
