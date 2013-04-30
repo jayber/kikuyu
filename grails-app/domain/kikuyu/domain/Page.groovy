@@ -16,6 +16,7 @@ class Page {
     static embedded = ['pageComponents']
 
     String name
+    List<PageComponent> pageComponents
 
     @Override
     String toString() {
