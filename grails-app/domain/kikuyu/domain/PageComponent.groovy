@@ -8,5 +8,6 @@ class PageComponent {
         url nullable: true, blank: true
     }
 
+    Boolean acceptPost
     String url
 }

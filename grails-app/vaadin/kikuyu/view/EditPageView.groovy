@@ -47,13 +47,16 @@ class EditPageView extends VerticalLayout implements View {
     }
 
     private void createNewPageComponentField(PageComponent pageComponent, FormLayout layout) {
-        TextField field = new TextField("Component URL", new MethodProperty(pageComponent, "url"));
 
-        final HorizontalLayout fieldLayout = new HorizontalLayout(field)
+        final HorizontalLayout fieldLayout = new HorizontalLayout()
         fieldLayout.spacing = true
+
+        TextField field = new TextField("Component URL", new MethodProperty(pageComponent, "url"));
+        fieldLayout.addComponent(field)
         final Button removeButton = new Button("", {
             layout.removeComponent(fieldLayout)
             page.pageComponents.remove(pageComponent)
+            presenter.savePage(page)
         } as Button.ClickListener)
         removeButton.setStyleName(Runo.BUTTON_LINK)
         removeButton.setIcon(new ThemeResource("minus_sign.png"))
@@ -62,6 +65,14 @@ class EditPageView extends VerticalLayout implements View {
         fieldLayout.addComponent(removeButton)
         fieldLayout.setComponentAlignment(removeButton, Alignment.BOTTOM_RIGHT)
 
+        CheckBox box = new CheckBox("Accept POSTs?", new MethodProperty(pageComponent, "acceptPost"))
+        box.immediate = true
+        box.addValueChangeListener({
+            box.commit()
+            presenter.savePage(page)
+        } as Property.ValueChangeListener)
+        fieldLayout.addComponent(box)
+        fieldLayout.setComponentAlignment(box, Alignment.BOTTOM_RIGHT)
         layout.addComponent(fieldLayout);
         setUpField(field)
     }
