@@ -8,6 +8,8 @@ class PageComponent {
         url nullable: true, blank: true
     }
 
+    Boolean template
     Boolean acceptPost
     String url
+    BigInteger slots
 }

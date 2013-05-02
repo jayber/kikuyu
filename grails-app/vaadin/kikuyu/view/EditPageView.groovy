@@ -36,9 +36,7 @@ class EditPageView extends VerticalLayout implements View {
         }
 
         final Button addComponentButton = new Button("add component", {
-            final PageComponent pageComponent = new PageComponent()
-            page.addPageComponent(pageComponent)
-            createNewPageComponentField(pageComponent, layout)
+            createPageComponentAndField(layout)
         } as Button.ClickListener)
         addComponentButton.setStyleName(Runo.BUTTON_SMALL)
         addComponent(addComponentButton)
@@ -46,15 +44,26 @@ class EditPageView extends VerticalLayout implements View {
         addComponent(new Button("done", { presenter.navigator.navigateTo("") } as Button.ClickListener))
     }
 
-    private void createNewPageComponentField(PageComponent pageComponent, FormLayout layout) {
+    private void createPageComponentAndField(layout) {
+        final PageComponent pageComponent = new PageComponent()
+        page.addPageComponent(pageComponent)
+        createNewPageComponentField(pageComponent, layout)
+    }
+
+    private void createNewPageComponentField(PageComponent pageComponent, FormLayout theWholeForm) {
+
+        final VerticalLayout componentLayout = new VerticalLayout()
+        componentLayout.spacing = true
 
         final HorizontalLayout fieldLayout = new HorizontalLayout()
+        componentLayout.addComponent(fieldLayout)
         fieldLayout.spacing = true
 
         TextField field = new TextField("Component URL", new MethodProperty(pageComponent, "url"));
+        setUpField(field)
         fieldLayout.addComponent(field)
         final Button removeButton = new Button("", {
-            layout.removeComponent(fieldLayout)
+            theWholeForm.removeComponent(componentLayout)
             page.pageComponents.remove(pageComponent)
             presenter.savePage(page)
         } as Button.ClickListener)
@@ -73,8 +82,52 @@ class EditPageView extends VerticalLayout implements View {
         } as Property.ValueChangeListener)
         fieldLayout.addComponent(box)
         fieldLayout.setComponentAlignment(box, Alignment.BOTTOM_RIGHT)
-        layout.addComponent(fieldLayout);
-        setUpField(field)
+
+
+        VerticalLayout scanLayout
+        CheckBox templateBox = new CheckBox("Template?", new MethodProperty(pageComponent, "template"))
+        templateBox.immediate = true
+        templateBox.addValueChangeListener({
+            templateBox.commit()
+            presenter.savePage(page)
+            scanLayout.visible = pageComponent.template ?: false
+        } as Property.ValueChangeListener)
+        fieldLayout.addComponent(templateBox)
+        fieldLayout.setComponentAlignment(templateBox, Alignment.BOTTOM_RIGHT)
+
+        scanLayout = new VerticalLayout()
+        scanLayout.visible = pageComponent.template ?: false
+
+        Button scan = new Button("scan", {
+            final int slots = presenter.acquireNumberOfSlots(field.value)
+            pageComponent.slots = slots
+            presenter.savePage(page)
+            makeSlots(theWholeForm)
+        } as Button.ClickListener)
+        scan.immediate = true
+        scanLayout.addComponent(scan)
+
+        componentLayout.addComponent(scanLayout)
+
+        theWholeForm.addComponent(componentLayout);
+    }
+
+    def makeSlots(theWholeForm) {
+        final List<PageComponent> components = page.pageComponents
+        int noComponents = components.size()
+
+        int requiredSlots = 1
+        for (PageComponent comp : components) {
+            final int slots = comp.slots == null ? 0 : comp.slots
+            requiredSlots = requiredSlots + slots
+        }
+
+        final int diff = requiredSlots - noComponents
+        if (diff > 0) {
+            for (int i = 0; i < diff; i++) {
+                createPageComponentAndField(theWholeForm)
+            }
+        }
     }
 
     private void setUpField(Field field) {

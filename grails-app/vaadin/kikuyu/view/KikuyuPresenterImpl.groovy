@@ -10,8 +10,15 @@ import kikuyu.domain.Page
 import kikuyu.domain.UrlMapping
 import kikuyu.service.PageService
 import kikuyu.service.UrlMappingService
+import org.springframework.web.client.RestTemplate
+
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 class KikuyuPresenterImpl implements KikuyuPresenter {
+
+
+    Pattern slotPattern = Pattern.compile("<div[^<>]*?location\\s*?>.*?</\\s*?div>")
 
     UrlMappingService urlMappingService
     PageService pageService
@@ -80,6 +87,18 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
         if (event.isDoubleClick()) {
             showEditPage(event.itemId)
         }
+    }
+
+    @Override
+    int acquireNumberOfSlots(String templateUrl) {
+        RestTemplate restTemplate = new RestTemplate()
+        final String templateHtml = restTemplate.getForObject(templateUrl, String.class)
+        final Matcher matcher = slotPattern.matcher(templateHtml)
+        int count = 0;
+        while (matcher.find()) {
+            count++;
+        }
+        return count;
     }
 
     def createNewPage = {

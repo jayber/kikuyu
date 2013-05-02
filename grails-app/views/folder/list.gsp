@@ -2,6 +2,9 @@
 
 <g:set var="entityName" value="${message(code: 'folder.label', default: 'Folder')}"/>
 
+<link rel="stylesheet" href="${resource(dir: 'css', file: 'main.css')}" type="text/css">
+
+
 <div id="list-folder" class="content scaffold-list" role="main">
     <h1><g:message code="default.list.label" args="[entityName]"/></h1>
     <g:if test="${flash.message}">

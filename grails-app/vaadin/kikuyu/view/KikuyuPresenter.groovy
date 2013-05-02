@@ -35,4 +35,5 @@ public interface KikuyuPresenter {
 
     void handlePageTableEvent(ItemClickEvent event)
 
+    int acquireNumberOfSlots(String templateUrl)
 }
