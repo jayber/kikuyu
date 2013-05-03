@@ -12,5 +12,6 @@ class TestController {
     }
 
     def template() {
+        println "why the error?"
     }
 }
