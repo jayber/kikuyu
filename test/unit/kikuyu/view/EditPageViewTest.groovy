@@ -1,9 +1,6 @@
 package kikuyu.view
 
-import com.vaadin.ui.Button
-import com.vaadin.ui.Component
-import com.vaadin.ui.HorizontalLayout
-import com.vaadin.ui.TextField
+import com.vaadin.ui.*
 import grails.test.GrailsMock
 import grails.test.mixin.TestMixin
 import grails.test.mixin.support.GrailsUnitTestMixin
@@ -42,21 +39,24 @@ class EditPageViewTest {
         assert nameField.caption == "Name"
         assert nameField.value == "test name"
 
-        final Component urlField = layout.getComponent(i++)
-        assert urlField instanceof HorizontalLayout
-        assert urlField.getComponent(0) instanceof TextField
-        assert urlField.getComponent(0).caption == "Component URL"
-        assert urlField.getComponent(0).value == "test component url1"
-        assert urlField.getComponent(1) instanceof Button
-        assert urlField.getComponent(1).icon.resourceId == "minus_sign.png"
+        final Component componentLayout = layout.getComponent(i++)
+        assert componentLayout instanceof VerticalLayout
+        final Component urlFieldLayout = componentLayout.getComponent(0)
+        assert urlFieldLayout instanceof HorizontalLayout
+        assert urlFieldLayout.getComponent(0).caption == "Component URL"
+        assert urlFieldLayout.getComponent(0).value == "test component url1"
+        assert urlFieldLayout.getComponent(1) instanceof Button
+        assert urlFieldLayout.getComponent(1).icon.resourceId == "minus_sign.png"
 
-        final Component componentUrlField = layout.getComponent(i++)
-        assert componentUrlField instanceof HorizontalLayout
-        assert componentUrlField.getComponent(0) instanceof TextField
-        assert componentUrlField.getComponent(0).caption == "Component URL"
-        assert componentUrlField.getComponent(0).value == "test component url2"
-        assert componentUrlField.getComponent(1) instanceof Button
-        assert componentUrlField.getComponent(1).icon.resourceId == "minus_sign.png"
+        final Component componentLayout2 = layout.getComponent(i++)
+        assert componentLayout2 instanceof VerticalLayout
+        final Component urlFieldLayout2 = componentLayout2.getComponent(0)
+        assert urlFieldLayout instanceof HorizontalLayout
+        assert urlFieldLayout2.getComponent(0) instanceof TextField
+        assert urlFieldLayout2.getComponent(0).caption == "Component URL"
+        assert urlFieldLayout2.getComponent(0).value == "test component url2"
+        assert urlFieldLayout2.getComponent(1) instanceof Button
+        assert urlFieldLayout2.getComponent(1).icon.resourceId == "minus_sign.png"
 
         final Component addButton = target.getComponent(j++)
         assert addButton instanceof Button

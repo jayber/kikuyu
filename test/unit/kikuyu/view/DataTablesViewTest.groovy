@@ -1,5 +1,6 @@
 package kikuyu.view
 
+import com.vaadin.ui.Button
 import com.vaadin.ui.TabSheet
 import com.vaadin.ui.Table
 import grails.test.GrailsMock
@@ -35,6 +36,11 @@ class DataTablesViewTest {
             ]
             new NamedColumnContainer<UrlMapping>(rows, UrlMapping, "name")
         }
+        mock.demand.getCreateNewPage() {
+            return {
+                println "nothing"
+            }
+        }
         component = new DataTablesView(mock.createMock())
     }
 
@@ -52,18 +58,28 @@ class DataTablesViewTest {
 
     private doPageTabTests(TabSheet.Tab tab) {
         assert tab.caption == "[default.pageTab.label]"
-        final table = tab.component
+        final layout = tab.component
+        final table = layout.getComponent(0)
         assert table instanceof Table
+
+        final button = layout.getComponent(1)
+        assert button instanceof Button
+        assert button.caption == "new"
     }
 
     private void doUrlMappingTabTests(TabSheet.Tab tab) {
         assert tab.caption == "[default.urlMappingTab.label]"
 
-        final table = tab.component
+        final layout = tab.component
+        final table = layout.getComponent(0)
         assert table instanceof Table
         assert table.itemIds == rows
 
         assert table.visibleColumns == ["pattern", "page", "matchOrder"]
+
+        final button = layout.getComponent(1)
+        assert button instanceof Button
+        assert button.caption == "new"
     }
 
     @After

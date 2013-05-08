@@ -101,6 +101,7 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
         return count;
     }
 
+
     def createNewPage = {
         showEditPage(new Page())
     }
