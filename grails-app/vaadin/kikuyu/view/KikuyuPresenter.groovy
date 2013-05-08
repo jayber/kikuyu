@@ -39,4 +39,5 @@ public interface KikuyuPresenter {
 
     def getCreateNewPage()
 
+    String[] acquireSubstitutionVarNames(String componentUrl)
 }

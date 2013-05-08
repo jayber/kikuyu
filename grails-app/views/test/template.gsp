@@ -24,7 +24,7 @@
 <body>
 <div class="template">
     template
-    <div class="slot" location>should be replaced</div> middle
+    <div class="slot" location>should be #{replaced}</div> middle
     <div class="slot" location>should also be replaced</div>
     after
 </div>

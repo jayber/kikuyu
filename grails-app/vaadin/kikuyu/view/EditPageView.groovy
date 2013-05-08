@@ -100,6 +100,7 @@ class EditPageView extends VerticalLayout implements View {
 
         Button scan = new Button("scan", {
             final int slots = presenter.acquireNumberOfSlots(field.value)
+            final String[] varNames = presenter.acquireSubstitutionVarNames(field.value)
             pageComponent.slots = slots
             presenter.savePage(page)
             makeSlots(theWholeForm)

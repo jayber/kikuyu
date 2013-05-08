@@ -3,6 +3,7 @@ package kikuyu.view
 import com.vaadin.data.Container
 import com.vaadin.event.ItemClickEvent
 import com.vaadin.navigator.Navigator
+import com.vaadin.ui.Notification
 import com.vaadin.ui.Table
 import com.vaadin.ui.UI
 import com.vaadin.ui.VerticalLayout
@@ -19,6 +20,7 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
 
 
     Pattern slotPattern = Pattern.compile("<div[^<>]*?location\\s*?>.*?</\\s*?div>")
+    Pattern substVarPattern = ~/#\{.*\}/
 
     UrlMappingService urlMappingService
     PageService pageService
@@ -91,14 +93,20 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
 
     @Override
     int acquireNumberOfSlots(String templateUrl) {
-        RestTemplate restTemplate = new RestTemplate()
-        final String templateHtml = restTemplate.getForObject(templateUrl, String.class)
+        String templateHtml = retrieveHtml(templateUrl)
         final Matcher matcher = slotPattern.matcher(templateHtml)
         int count = 0;
         while (matcher.find()) {
             count++;
         }
         return count;
+    }
+
+    private String retrieveHtml(String url) {
+        String templateUrl
+        RestTemplate restTemplate = new RestTemplate()
+        final String templateHtml = restTemplate.getForObject(url, String.class)
+        templateHtml
     }
 
 
@@ -112,5 +120,17 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
         urlMappingTable.addItem(mapping);
         factory.currentSelectedItemId = mapping
         urlMappingTable.setEditable(true)
+    }
+
+    @Override
+    String[] acquireSubstitutionVarNames(String componentUrl) {
+        String templateHtml = retrieveHtml(componentUrl)
+        final Matcher matcher = substVarPattern.matcher(templateHtml)
+        int count = 0;
+        while (matcher.find()) {
+            count++;
+        }
+        Notification.show(count.toString())
+        return null
     }
 }
