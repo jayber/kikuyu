@@ -9,6 +9,7 @@ import com.vaadin.ui.*
 import com.vaadin.ui.themes.Runo
 import kikuyu.domain.Page
 import kikuyu.domain.PageComponent
+import kikuyu.domain.SubstitutionVariable
 
 class EditPageView extends VerticalLayout implements View {
     private KikuyuPresenter presenter
@@ -52,16 +53,12 @@ class EditPageView extends VerticalLayout implements View {
 
     private void createNewPageComponentField(PageComponent pageComponent, FormLayout theWholeForm) {
 
-        final VerticalLayout componentLayout = new VerticalLayout()
+        final GridLayout componentLayout = new GridLayout(4, 2)
         componentLayout.spacing = true
-
-        final HorizontalLayout fieldLayout = new HorizontalLayout()
-        componentLayout.addComponent(fieldLayout)
-        fieldLayout.spacing = true
 
         TextField field = new TextField("Component URL", new MethodProperty(pageComponent, "url"));
         setUpField(field)
-        fieldLayout.addComponent(field)
+        componentLayout.addComponent(field, 0, 0)
         final Button removeButton = new Button("", {
             theWholeForm.removeComponent(componentLayout)
             page.pageComponents.remove(pageComponent)
@@ -71,8 +68,8 @@ class EditPageView extends VerticalLayout implements View {
         removeButton.setIcon(new ThemeResource("minus_sign.png"))
         removeButton.description = "remove component"
 
-        fieldLayout.addComponent(removeButton)
-        fieldLayout.setComponentAlignment(removeButton, Alignment.BOTTOM_RIGHT)
+        componentLayout.addComponent(removeButton, 1, 0)
+        componentLayout.setComponentAlignment(removeButton, Alignment.BOTTOM_RIGHT)
 
         CheckBox box = new CheckBox("Accept POSTs?", new MethodProperty(pageComponent, "acceptPost"))
         box.immediate = true
@@ -80,37 +77,60 @@ class EditPageView extends VerticalLayout implements View {
             box.commit()
             presenter.savePage(page)
         } as Property.ValueChangeListener)
-        fieldLayout.addComponent(box)
-        fieldLayout.setComponentAlignment(box, Alignment.BOTTOM_RIGHT)
+        componentLayout.addComponent(box, 2, 0)
+        componentLayout.setComponentAlignment(box, Alignment.BOTTOM_RIGHT)
 
-
-        VerticalLayout scanLayout
         CheckBox templateBox = new CheckBox("Template?", new MethodProperty(pageComponent, "template"))
         templateBox.immediate = true
         templateBox.addValueChangeListener({
             templateBox.commit()
             presenter.savePage(page)
-            scanLayout.visible = pageComponent.template ?: false
         } as Property.ValueChangeListener)
-        fieldLayout.addComponent(templateBox)
-        fieldLayout.setComponentAlignment(templateBox, Alignment.BOTTOM_RIGHT)
+        componentLayout.addComponent(templateBox, 3, 0)
+        componentLayout.setComponentAlignment(templateBox, Alignment.BOTTOM_RIGHT)
 
-        scanLayout = new VerticalLayout()
-        scanLayout.visible = pageComponent.template ?: false
+        HorizontalLayout scanLayout = new HorizontalLayout()
+//        scanLayout.spacing = true
+        scanLayout.width = "100%"
+
+        final FormLayout grid = new FormLayout()
+        grid.width = "100%"
 
         Button scan = new Button("scan", {
             final int slots = presenter.acquireNumberOfSlots(field.value)
             final String[] varNames = presenter.acquireSubstitutionVarNames(field.value)
             pageComponent.slots = slots
+            List<SubstitutionVariable> vars = []
+            for (String name : varNames) {
+                vars.add(new SubstitutionVariable(name: name))
+            }
+            pageComponent.substitutionVariables = vars
             presenter.savePage(page)
             makeSlots(theWholeForm)
+
+            makeSubstVarFields(grid, vars)
         } as Button.ClickListener)
         scan.immediate = true
         scanLayout.addComponent(scan)
+        scanLayout.setComponentAlignment(scan, Alignment.TOP_LEFT)
+        scanLayout.addComponent(grid)
+        scanLayout.setComponentAlignment(grid, Alignment.TOP_RIGHT)
 
-        componentLayout.addComponent(scanLayout)
+        makeSubstVarFields(grid, pageComponent.substitutionVariables)
+
+        componentLayout.addComponent(scanLayout, 0, 1)
 
         theWholeForm.addComponent(componentLayout);
+    }
+
+    def makeSubstVarFields(Layout grid, List<SubstitutionVariable> vars) {
+        grid.removeAllComponents()
+        for (SubstitutionVariable var : vars) {
+            final TextField field = new TextField("#{$var.name}", new MethodProperty(var, "value"))
+            setUpFieldInner(field)
+            grid.addComponent(field)
+            grid.setComponentAlignment(field, Alignment.TOP_RIGHT)
+        }
     }
 
     def makeSlots(theWholeForm) {
@@ -133,6 +153,10 @@ class EditPageView extends VerticalLayout implements View {
 
     private void setUpField(Field field) {
         field.width = 500
+        setUpFieldInner(field)
+    }
+
+    private void setUpFieldInner(Field field) {
         field.nullRepresentation = ""
         field.immediate = true
         field.addValueChangeListener({

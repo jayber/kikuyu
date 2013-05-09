@@ -3,7 +3,6 @@ package kikuyu.view
 import com.vaadin.data.Container
 import com.vaadin.event.ItemClickEvent
 import com.vaadin.navigator.Navigator
-import com.vaadin.ui.Notification
 import com.vaadin.ui.Table
 import com.vaadin.ui.UI
 import com.vaadin.ui.VerticalLayout
@@ -20,7 +19,7 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
 
 
     Pattern slotPattern = Pattern.compile("<div[^<>]*?location\\s*?>.*?</\\s*?div>")
-    Pattern substVarPattern = ~/#\{.*\}/
+    Pattern substVarPattern = ~/#\{(.*?)\}/
 
     UrlMappingService urlMappingService
     PageService pageService
@@ -126,11 +125,13 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
     String[] acquireSubstitutionVarNames(String componentUrl) {
         String templateHtml = retrieveHtml(componentUrl)
         final Matcher matcher = substVarPattern.matcher(templateHtml)
-        int count = 0;
+
+        List<String> result = []
         while (matcher.find()) {
-            count++;
+            if (matcher.groupCount() == 1) {
+                result.add(matcher.group(1))
+            }
         }
-        Notification.show(count.toString())
-        return null
+        return result
     }
 }
