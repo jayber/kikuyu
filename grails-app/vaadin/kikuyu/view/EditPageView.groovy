@@ -90,31 +90,34 @@ class EditPageView extends VerticalLayout implements View {
         componentLayout.setComponentAlignment(templateBox, Alignment.BOTTOM_RIGHT)
 
         HorizontalLayout scanLayout = new HorizontalLayout()
-//        scanLayout.spacing = true
         scanLayout.width = "100%"
 
         final FormLayout grid = new FormLayout()
         grid.width = "100%"
+        grid.setMargin(false)
 
         Button scan = new Button("scan", {
             final int slots = presenter.acquireNumberOfSlots(field.value)
             final String[] varNames = presenter.acquireSubstitutionVarNames(field.value)
             pageComponent.slots = slots
+            if (slots > 0) {
+                templateBox.value = true
+            }
             List<SubstitutionVariable> vars = []
             for (String name : varNames) {
                 vars.add(new SubstitutionVariable(name: name))
             }
             pageComponent.substitutionVariables = vars
-            presenter.savePage(page)
-            makeSlots(theWholeForm)
 
+            makeSlots(theWholeForm)
             makeSubstVarFields(grid, vars)
+            presenter.savePage(page)
         } as Button.ClickListener)
         scan.immediate = true
         scanLayout.addComponent(scan)
         scanLayout.setComponentAlignment(scan, Alignment.TOP_LEFT)
         scanLayout.addComponent(grid)
-        scanLayout.setComponentAlignment(grid, Alignment.TOP_RIGHT)
+        scanLayout.setComponentAlignment(grid, Alignment.BOTTOM_RIGHT)
 
         makeSubstVarFields(grid, pageComponent.substitutionVariables)
 
@@ -125,11 +128,16 @@ class EditPageView extends VerticalLayout implements View {
 
     def makeSubstVarFields(Layout grid, List<SubstitutionVariable> vars) {
         grid.removeAllComponents()
-        for (SubstitutionVariable var : vars) {
-            final TextField field = new TextField("#{$var.name}", new MethodProperty(var, "value"))
-            setUpFieldInner(field)
-            grid.addComponent(field)
-            grid.setComponentAlignment(field, Alignment.TOP_RIGHT)
+        if (vars != null && vars.size() > 0) {
+            final Label title = new Label("Variables")
+            title.setStyleName(Runo.LABEL_SMALL)
+            grid.addComponent(title)
+            for (SubstitutionVariable var : vars) {
+                final TextField field = new TextField(var.name, new MethodProperty(var, "value"))
+                setUpFieldInner(field)
+                grid.addComponent(field)
+                grid.setComponentAlignment(field, Alignment.TOP_RIGHT)
+            }
         }
     }
 

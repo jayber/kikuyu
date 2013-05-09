@@ -18,7 +18,7 @@ import java.util.regex.Pattern
 class KikuyuPresenterImpl implements KikuyuPresenter {
 
 
-    Pattern slotPattern = Pattern.compile("<div[^<>]*?location\\s*?>.*?</\\s*?div>")
+    Pattern slotPattern = ~"<div[^<>]*?location\\s*?>.*?</\\s*?div>"
     Pattern substVarPattern = ~/#\{(.*?)\}/
 
     UrlMappingService urlMappingService
@@ -102,7 +102,6 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
     }
 
     private String retrieveHtml(String url) {
-        String templateUrl
         RestTemplate restTemplate = new RestTemplate()
         final String templateHtml = restTemplate.getForObject(url, String.class)
         templateHtml
