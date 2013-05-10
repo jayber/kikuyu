@@ -1,1 +1,8 @@
-This file was created by IntelliJ IDEA 12.1.1 for binding GitHub repository
+
+You will need to install grails 2.2.1, and set this project up in IntelliJ as a grails project:
+http://grails.org
+
+You will also need to install mongodb server:
+http://www.mongodb.org/
+
+follow the instructions for installing and testing mongodb

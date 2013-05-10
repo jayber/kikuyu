@@ -29,6 +29,7 @@ class EditPageViewTest {
         target = new EditPageView(presenter, page)
     }
 
+//    todo: needs more tests
     void testEnter() {
         int j = 0
         final Component layout = target.getComponent(j++)
@@ -39,23 +40,21 @@ class EditPageViewTest {
         assert nameField.caption == "Name"
         assert nameField.value == "test name"
 
-        final GridLayout componentLayout = layout.getComponent(i++)
-        assert componentLayout instanceof Layout
+        final GridLayout gridLayout = layout.getComponent(i++)
+        assert gridLayout instanceof Layout
 
-        assert componentLayout.getComponent(0, 0).caption == "Component URL"
-        assert componentLayout.getComponent(0, 0).value == "test component url1"
-        assert componentLayout.getComponent(0, 1) instanceof Button
-        assert componentLayout.getComponent(0, 1).icon.resourceId == "minus_sign.png"
+        assert gridLayout.getComponent(0, 0).caption == "Component URL"
+        assert gridLayout.getComponent(0, 0).value == "test component url1"
+        assert gridLayout.getComponent(1, 0) instanceof Button
+        assert gridLayout.getComponent(1, 0).icon.resourceId == "minus_sign.png"
 
-        final Component componentLayout2 = layout.getComponent(i++)
-        assert componentLayout2 instanceof VerticalLayout
-        final Component urlFieldLayout2 = componentLayout2.getComponent(0)
-        assert urlFieldLayout instanceof HorizontalLayout
-        assert urlFieldLayout2.getComponent(0) instanceof TextField
-        assert urlFieldLayout2.getComponent(0).caption == "Component URL"
-        assert urlFieldLayout2.getComponent(0).value == "test component url2"
-        assert urlFieldLayout2.getComponent(1) instanceof Button
-        assert urlFieldLayout2.getComponent(1).icon.resourceId == "minus_sign.png"
+        final Component gridLayout2 = layout.getComponent(i++)
+        assert gridLayout2 instanceof GridLayout
+        assert gridLayout2.getComponent(0, 0) instanceof TextField
+        assert gridLayout2.getComponent(0, 0).caption == "Component URL"
+        assert gridLayout2.getComponent(0, 0).value == "test component url2"
+        assert gridLayout2.getComponent(1, 0) instanceof Button
+        assert gridLayout2.getComponent(1, 0).icon.resourceId == "minus_sign.png"
 
         final Component addButton = target.getComponent(j++)
         assert addButton instanceof Button
