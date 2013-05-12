@@ -9,7 +9,7 @@ import com.vaadin.ui.*
 import com.vaadin.ui.themes.Runo
 import kikuyu.domain.Page
 import kikuyu.domain.PageComponent
-import kikuyu.domain.SubstitutionVariable
+import util.MapProperty
 
 class EditPageView extends VerticalLayout implements View {
     private KikuyuPresenter presenter
@@ -89,57 +89,55 @@ class EditPageView extends VerticalLayout implements View {
         componentLayout.addComponent(templateBox, 3, 0)
         componentLayout.setComponentAlignment(templateBox, Alignment.BOTTOM_RIGHT)
 
-        HorizontalLayout scanLayout = new HorizontalLayout()
-        scanLayout.width = "100%"
+        final FormLayout subFormLayout = new FormLayout()
 
-        final FormLayout grid = new FormLayout()
-        grid.width = "100%"
-        grid.setMargin(false)
-
-        Button scan = new Button("scan", {
+        Button scanButton = new Button("scan", {
             final int slots = presenter.acquireNumberOfSlots(field.value)
             final String[] varNames = presenter.acquireSubstitutionVarNames(field.value)
             pageComponent.slots = slots
             if (slots > 0) {
                 templateBox.value = true
             }
-            List<SubstitutionVariable> vars = []
+
+            def vars = [:]
             for (String name : varNames) {
-                vars.add(new SubstitutionVariable(name: name))
+                vars.put(name, "")
             }
             pageComponent.substitutionVariables = vars
 
             makeSlots(theWholeForm)
-            makeSubstVarFields(grid, vars)
+            makeSubstVarFields(subFormLayout, pageComponent.substitutionVariables)
             presenter.savePage(page)
         } as Button.ClickListener)
-        scan.immediate = true
-        scanLayout.addComponent(scan)
-        scanLayout.setComponentAlignment(scan, Alignment.TOP_LEFT)
-        scanLayout.addComponent(grid)
-        scanLayout.setComponentAlignment(grid, Alignment.BOTTOM_RIGHT)
+        scanButton.immediate = true
+        scanButton.setSizeUndefined()
 
-        makeSubstVarFields(grid, pageComponent.substitutionVariables)
+        final HorizontalLayout innerLayout = new HorizontalLayout(scanButton, subFormLayout)
+        componentLayout.addComponent(innerLayout, 0, 1)
+        innerLayout.setComponentAlignment(subFormLayout, Alignment.TOP_RIGHT)
 
-        componentLayout.addComponent(scanLayout, 0, 1)
+        makeSubstVarFields(subFormLayout, pageComponent.substitutionVariables)
 
         theWholeForm.addComponent(componentLayout);
     }
 
-    def makeSubstVarFields(Layout grid, List<SubstitutionVariable> vars) {
-        grid.removeAllComponents()
-        if (vars != null && vars.size() > 0) {
+    def makeSubstVarFields(Layout layout, Map data) {
+        layout.removeAllComponents()
+        if (data != null && data.size() > 0) {
             final Label title = new Label("Variables")
             title.setStyleName(Runo.LABEL_SMALL)
-            grid.addComponent(title)
-            for (SubstitutionVariable var : vars) {
-                final TextField field = new TextField(var.name, new MethodProperty(var, "value"))
+            layout.addComponent(title)
+
+            data.each {
+                final TextField field = new TextField(it.key, new MapProperty(bean: data, propertyName: it.key, propertyClass: String.class))
+                field.width = 250
                 setUpFieldInner(field)
-                grid.addComponent(field)
-                grid.setComponentAlignment(field, Alignment.TOP_RIGHT)
+                layout.addComponent(field)
+                layout.setComponentAlignment(field, Alignment.TOP_LEFT)
             }
         }
     }
+
 
     def makeSlots(theWholeForm) {
         final List<PageComponent> components = page.pageComponents
@@ -176,4 +174,5 @@ class EditPageView extends VerticalLayout implements View {
     @Override
     void enter(ViewChangeListener.ViewChangeEvent event) {
     }
+
 }

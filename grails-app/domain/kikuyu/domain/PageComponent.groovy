@@ -7,7 +7,6 @@ class PageComponent {
     static constraints = {
         url nullable: true, blank: true
     }
-    static hasMany = [substitutionVariables: SubstitutionVariable]
 
     static mappings = {
         substitutionVariables lazy: false
@@ -19,5 +18,5 @@ class PageComponent {
     Boolean acceptPost
     String url
     BigInteger slots
-    List<SubstitutionVariable> substitutionVariables
+    Map substitutionVariables = new HashMap()
 }

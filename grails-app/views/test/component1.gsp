@@ -1,1 +1,1 @@
-<div class="comp1">Component 1 is here</div>
+<div class="comp1">Component 1 is here with some #{thing}</div>

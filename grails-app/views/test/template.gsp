@@ -23,10 +23,10 @@
 
 <body>
 <div class="template">
-    template
-    <div class="slot" location>should be #{replaced}</div> middle
-    <div class="slot" location>should #{also} be replaced</div>
-    after
+    template #{replaced}
+    <div class="slot" location>should be</div> middle
+    <div class="slot" location>should  be replaced</div>
+    after #{also}
 </div>
 
 </body>
