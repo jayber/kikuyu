@@ -29,6 +29,11 @@ class UrlMappingService {
     }
 
     BigInteger findLastMatchOrder() {
-        listUrlMappings().last().matchOrder
+        final List<UrlMapping> mappings = listUrlMappings()
+        if (!mappings.isEmpty()) {
+            mappings.last().matchOrder
+        } else {
+            -1
+        }
     }
 }
