@@ -13,4 +13,7 @@ class TestController {
 
     def template() {
     }
+
+    def template2() {
+    }
 }
