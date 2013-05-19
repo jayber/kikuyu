@@ -3,9 +3,11 @@ package kikuyu.view
 import com.vaadin.data.Container
 import com.vaadin.data.Item
 import com.vaadin.event.ItemClickEvent
+import com.vaadin.navigator.Navigator
 import com.vaadin.shared.MouseEventDetails
 import com.vaadin.ui.Component
 import com.vaadin.ui.Table
+import grails.test.GrailsMock
 import grails.test.mixin.TestMixin
 import grails.test.mixin.support.GrailsUnitTestMixin
 import groovy.mock.interceptor.MockFor
@@ -15,6 +17,11 @@ import kikuyu.domain.UrlMapping
 import kikuyu.service.PageService
 import kikuyu.service.UrlMappingService
 import org.junit.Before
+import org.junit.Test
+
+import static org.mockito.Matchers.any
+import static org.mockito.Matchers.eq
+import static org.mockito.Mockito.*
 
 @TestMixin(GrailsUnitTestMixin)
 class KikuyuPresenterImplTest {
@@ -45,7 +52,8 @@ class KikuyuPresenterImplTest {
             TestFixtures.pages
         }
         target.pageService = pageService.proxyDelegateInstance()
-        target.listPageOptions()
+        final List<Page> options = target.listPageOptions()
+        assert TestFixtures.pages == options
     }
 
     public void testSwitchMatchOrder() throws Exception {
@@ -68,17 +76,40 @@ class KikuyuPresenterImplTest {
 
     public void testSaveRow() throws Exception {
         urlMappingService.demand.saveUrlMapping() { UrlMapping urlMapping -> }
-        target.setUrlMappingService(urlMappingService.proxyInstance())
+        final GroovyObject instance = urlMappingService.proxyInstance()
+        target.setUrlMappingService(instance)
         final UrlMapping mapping = new UrlMapping()
         target.saveRow(mapping)
+
+        urlMappingService.verify(instance)
     }
 
-    void testHandleUrlMappingTableClickHandler() {
+    void testHandleUrlMappingTableClickHandlerSingleClick() {
+
+        def factoryMock = mockFor(UrlMappingTableFieldFactory)
+        def tableMock = mockFor(Table)
+        tableMock.demand.setEditable(1) { value -> assert !value }
+
+        def eventMock = new MockFor(ItemClickEvent)
+        eventMock.demand.isDoubleClick(1) { false }
+
+        def eventMockInstance = eventMock.proxyInstance(
+                [{} as Component, {} as Item, {}, {}, {} as MouseEventDetails] as Object[]
+        )
+
+        target.handleUrlMappingTableClick(eventMockInstance, factoryMock.createMock(), tableMock.createMock())
+
+        factoryMock.verify()
+        tableMock.verify()
+        eventMock.verify(eventMockInstance)
+    }
+
+    void testHandleUrlMappingTableClickHandlerDoubleClick() {
 
         def factoryMock = mockFor(UrlMappingTableFieldFactory)
         def tableMock = mockFor(Table)
         factoryMock.demand.setCurrentSelectedItemId(1) {}
-        tableMock.demand.setEditable(1) {}
+        tableMock.demand.setEditable(1) { value -> assert value }
 
         def eventMock = new MockFor(ItemClickEvent)
         eventMock.demand.isDoubleClick(1) { true }
@@ -108,6 +139,119 @@ class KikuyuPresenterImplTest {
 //        assert pages.itemIds == TestFixtures.pages
 
         pageService.verify(instance)
+
+    }
+
+
+    @Test
+    public void testSavePage() throws Exception {
+        final Page page = new Page()
+        pageService.demand.savePage(1) { Page page1 -> assert page == page1 }
+        final GroovyObject instance = pageService.proxyInstance()
+        target.pageService = instance
+
+        target.savePage(page)
+
+        pageService.verify(instance)
+    }
+
+    @Test
+    public void testHandlePageTableSingleClickEvent() throws Exception {
+
+        final Navigator navigator = mock(Navigator)
+        target.navigator = navigator
+        final ItemClickEvent event = mock(ItemClickEvent)
+        when(event.isDoubleClick()).thenReturn(false)
+
+        target.handlePageTableEvent(event)
+
+        verifyNoMoreInteractions(navigator)
+
+    }
+
+    @Test
+    public void testHandlePageTableDoubleClickEvent() throws Exception {
+
+        final Navigator navigator = mock(Navigator)
+        target.navigator = navigator
+        final Page page = new Page()
+        final ItemClickEvent event = mock(ItemClickEvent)
+        when(event.isDoubleClick()).thenReturn(true)
+        when(event.itemId).thenReturn(page)
+
+        target.handlePageTableEvent(event)
+
+        verify(navigator).addView(eq("pageEditor-null"), any(EditPageView))
+        verify(navigator).navigateTo("pageEditor-null")
+        verifyNoMoreInteractions(navigator)
+
+    }
+
+    @Test
+    public void testAcquireNumberOfSlots() throws Exception {
+
+        final GrailsMock mock = mockFor(HtmlRetriever)
+        final String testUrl = "testUrl"
+        mock.demand.retrieveHtml(1) { String url ->
+            assert testUrl == url
+            "before <div location> </div> middle <div location> </div> after"
+        }
+        target.retriever = mock.createMock()
+
+        final int slots = target.acquireNumberOfSlots(testUrl)
+        assert 2 == slots
+    }
+
+    @Test
+    public void testCreateNewPage() throws Exception {
+        final Navigator navigator = mock(Navigator)
+        target.navigator = navigator
+
+        target.createNewPage()
+
+        verify(navigator).addView(eq("pageEditor-null"), any(EditPageView))
+        verify(navigator).navigateTo("pageEditor-null")
+        verifyNoMoreInteractions(navigator)
+    }
+
+    @Test
+    public void testAcquireSubstitutionVarNames() throws Exception {
+
+        final GrailsMock mock = mockFor(HtmlRetriever)
+        final String testUrl = "testUrl"
+        mock.demand.retrieveHtml(1) { String url ->
+            assert testUrl == url
+            "before #{var1} middle #{var2} after"
+        }
+        target.retriever = mock.createMock()
+
+        final String[] names = target.acquireSubstitutionVarNames(testUrl)
+
+        assert ["var1", "var2"] == names
+    }
+
+    public void testCreateNewUrlMapping() throws Exception {
+        urlMappingService.demand.findLastMatchOrder() { 10 }
+        target.urlMappingService = urlMappingService.proxyDelegateInstance()
+
+        final GrailsMock mockTable = mockFor(Table)
+        final GrailsMock mockFactory = mockFor(UrlMappingTableFieldFactory)
+        mockTable.demand.addItem(1) { UrlMapping mapping ->
+            assert mapping.pattern == "new pattern"
+        }
+        mockFactory.demand.setCurrentSelectedItemId(1) { UrlMapping mapping ->
+            assert mapping.pattern == "new pattern"
+            assert mapping.matchOrder == 11
+        }
+        mockTable.demand.setEditable(1) { boolean editable ->
+            assert editable
+        }
+
+        final Object tableMock = mockTable.createMock()
+        final Object factoryInstance = mockFactory.createMock()
+
+        target.createNewUrlMapping(tableMock, factoryInstance)
+
 
     }
 }

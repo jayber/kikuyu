@@ -10,13 +10,11 @@ import kikuyu.domain.Page
 import kikuyu.domain.UrlMapping
 import kikuyu.service.PageService
 import kikuyu.service.UrlMappingService
-import org.springframework.web.client.RestTemplate
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 class KikuyuPresenterImpl implements KikuyuPresenter {
-
 
     Pattern slotPattern = ~"<div[^<>]*?location\\s*?>.*?</\\s*?div>"
     Pattern substVarPattern = ~/#\{(.*?)\}/
@@ -24,6 +22,7 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
     UrlMappingService urlMappingService
     PageService pageService
     Navigator navigator
+    HtmlRetriever retriever
 
     @Override
     NamedColumnContainer getUrlMappingTableDataSource() {
@@ -67,8 +66,9 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
 
     @Override
     void showEditPage(Page page) {
-        navigator.addView("pageEditor", new EditPageView(this, page))
-        navigator.navigateTo("pageEditor")
+        final String viewName = "pageEditor-" + page.id
+        navigator.addView(viewName, new EditPageView(this, page))
+        navigator.navigateTo(viewName)
     }
 
     @Override
@@ -92,7 +92,7 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
 
     @Override
     int acquireNumberOfSlots(String templateUrl) {
-        String templateHtml = retrieveHtml(templateUrl)
+        String templateHtml = retriever.retrieveHtml(templateUrl)
         final Matcher matcher = slotPattern.matcher(templateHtml)
         int count = 0;
         while (matcher.find()) {
@@ -101,19 +101,13 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
         return count;
     }
 
-    private String retrieveHtml(String url) {
-        RestTemplate restTemplate = new RestTemplate()
-        final String templateHtml = restTemplate.getForObject(url, String.class)
-        templateHtml
-    }
-
 
     def createNewPage = {
         showEditPage(new Page())
     }
 
     def createNewUrlMapping = { urlMappingTable, factory ->
-        final UrlMapping mapping = new UrlMapping(pattern: "new pattern")
+        UrlMapping mapping = new UrlMapping("new pattern", null)
         mapping.matchOrder = urlMappingService.findLastMatchOrder() + 1
         urlMappingTable.addItem(mapping);
         factory.currentSelectedItemId = mapping
@@ -122,7 +116,7 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
 
     @Override
     String[] acquireSubstitutionVarNames(String componentUrl) {
-        String templateHtml = retrieveHtml(componentUrl)
+        String templateHtml = retriever.retrieveHtml(componentUrl)
         final Matcher matcher = substVarPattern.matcher(templateHtml)
 
         List<String> result = []

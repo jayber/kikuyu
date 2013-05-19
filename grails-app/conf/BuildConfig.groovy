@@ -42,6 +42,9 @@ grails.project.dependency.resolution = {
 
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes e.g.
+        test "org.mockito:mockito-core:1.9.5"
+        test "org.powermock:powermock-module-junit4:1.5"
+        test "org.powermock:powermock-api-mockito:1.5"
 
     }
 

@@ -30,7 +30,7 @@ class EditPageViewTest {
     }
 
 //    todo: needs more tests
-    void testEnter() {
+    void testInit() {
         int j = 0
         final Component layout = target.getComponent(j++)
 
