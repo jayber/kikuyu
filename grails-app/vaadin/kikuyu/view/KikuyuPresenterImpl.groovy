@@ -10,6 +10,7 @@ import kikuyu.domain.Page
 import kikuyu.domain.UrlMapping
 import kikuyu.service.PageService
 import kikuyu.service.UrlMappingService
+import kikuyu.view.editpage.EditPageView
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -83,8 +84,7 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
         navigator.addView("", new DataTablesView(this))
     }
 
-    @Override
-    void handlePageTableEvent(ItemClickEvent event) {
+    def pageTableEventAction = { ItemClickEvent event ->
         if (event.isDoubleClick()) {
             showEditPage(event.itemId)
         }
@@ -127,4 +127,6 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
         }
         return result
     }
+
+    def navigateHomeAction = { navigator.navigateTo("") }
 }

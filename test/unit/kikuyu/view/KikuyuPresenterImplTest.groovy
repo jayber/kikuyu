@@ -16,6 +16,7 @@ import kikuyu.domain.Page
 import kikuyu.domain.UrlMapping
 import kikuyu.service.PageService
 import kikuyu.service.UrlMappingService
+import kikuyu.view.editpage.EditPageView
 import org.junit.Before
 import org.junit.Test
 
@@ -163,7 +164,7 @@ class KikuyuPresenterImplTest {
         final ItemClickEvent event = mock(ItemClickEvent)
         when(event.isDoubleClick()).thenReturn(false)
 
-        target.handlePageTableEvent(event)
+        target.pageTableEventAction(event)
 
         verifyNoMoreInteractions(navigator)
 
@@ -179,7 +180,7 @@ class KikuyuPresenterImplTest {
         when(event.isDoubleClick()).thenReturn(true)
         when(event.itemId).thenReturn(page)
 
-        target.handlePageTableEvent(event)
+        target.pageTableEventAction(event)
 
         verify(navigator).addView(eq("pageEditor-null"), any(EditPageView))
         verify(navigator).navigateTo("pageEditor-null")

@@ -1,7 +1,6 @@
 package kikuyu.view
 
 import com.vaadin.data.Container
-import com.vaadin.event.ItemClickEvent
 import com.vaadin.navigator.Navigator
 import com.vaadin.ui.Table
 import com.vaadin.ui.UI
@@ -33,11 +32,15 @@ public interface KikuyuPresenter {
 
     void buildNavigator(VerticalLayout layout, UI ui)
 
-    void handlePageTableEvent(ItemClickEvent event)
+    def getPageTableEventAction()
 
     int acquireNumberOfSlots(String templateUrl)
 
     def getCreateNewPage()
 
+    def getCreateNewUrlMapping()
+
     String[] acquireSubstitutionVarNames(String componentUrl)
+
+    def getNavigateHomeAction()
 }

@@ -43,9 +43,7 @@ class DataTablesView extends VerticalLayout implements View {
         pageTable.setSizeFull()
         pageTable.setContainerDataSource(presenter.pageTableDataSource)
 
-        pageTable.addItemClickListener({ ItemClickEvent event ->
-            presenter.handlePageTableEvent(event)
-        } as ItemClickEvent.ItemClickListener)
+        pageTable.addItemClickListener(presenter.pageTableEventAction as ItemClickEvent.ItemClickListener)
 
         layout.addComponent(pageTable)
         final Button button = new Button("new", presenter.createNewPage as Button.ClickListener)

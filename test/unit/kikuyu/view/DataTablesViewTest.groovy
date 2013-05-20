@@ -36,6 +36,11 @@ class DataTablesViewTest {
             ]
             new NamedColumnContainer<UrlMapping>(rows, UrlMapping, "name")
         }
+        mock.demand.getPageTableEventAction() {
+            return {
+                println "nothing"
+            }
+        }
         mock.demand.getCreateNewPage() {
             return {
                 println "nothing"

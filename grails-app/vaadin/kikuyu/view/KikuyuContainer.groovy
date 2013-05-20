@@ -7,12 +7,12 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.Runo
 
-class KikuyuComponent extends VerticalLayout {
+class KikuyuContainer extends VerticalLayout {
 
     KikuyuPresenter presenter
     UI ui
 
-    KikuyuComponent(KikuyuPresenter presenter, UI ui) {
+    KikuyuContainer(KikuyuPresenter presenter, UI ui) {
         this.ui = ui
         this.presenter = presenter
         setSpacing(true)

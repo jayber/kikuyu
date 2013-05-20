@@ -14,7 +14,7 @@ import org.junit.Before
 @TestMixin(GrailsUnitTestMixin)
 class KikuyuComponentTests {
 
-    KikuyuComponent component
+    KikuyuContainer component
     GrailsMock mock
 
 
@@ -30,7 +30,7 @@ class KikuyuComponentTests {
             }
         } as UI
 
-        component = new KikuyuComponent(mock.createMock(), uiMock)
+        component = new KikuyuContainer(mock.createMock(), uiMock)
     }
 
     void testComponentTree() {
