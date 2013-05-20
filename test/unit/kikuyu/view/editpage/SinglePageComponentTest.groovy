@@ -28,7 +28,6 @@ class SinglePageComponentTest {
         mockControlPresenter = mockFor(KikuyuPresenter)
         mockControlContainer = mockFor(EditPageView)
 
-
         mockControlContainer.demand.setUpField() {}
         mockControlContainer.demand.setUpFieldInner(2) {}
     }

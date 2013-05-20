@@ -17,6 +17,8 @@ class SinglePageComponent extends VerticalLayout {
     private PageComponent pageComponent
     private KikuyuPresenter presenter
     private Layout theWholeForm
+    private FormLayout substitutionVarsLayout
+    private CheckBox templateBox
 
     SinglePageComponent(PageComponent pageComponent, Layout theWholeForm, KikuyuPresenter presenter, Page page, EditPageView container) {
 
@@ -25,6 +27,8 @@ class SinglePageComponent extends VerticalLayout {
         this.pageComponent = pageComponent
         this.page = page
         this.container = container
+
+        substitutionVarsLayout = new FormLayout()
 
         final GridLayout componentLayout = new GridLayout(4, 2)
         this.addComponent(componentLayout)
@@ -51,7 +55,7 @@ class SinglePageComponent extends VerticalLayout {
         componentLayout.addComponent(box, 2, 0)
         componentLayout.setComponentAlignment(box, Alignment.BOTTOM_RIGHT)
 
-        CheckBox templateBox = new CheckBox("Template?", new MethodProperty(pageComponent, "template"))
+        templateBox = new CheckBox("Template?", new MethodProperty(pageComponent, "template"))
         templateBox.immediate = true
         templateBox.addValueChangeListener({
             templateBox.commit()
@@ -60,35 +64,36 @@ class SinglePageComponent extends VerticalLayout {
         componentLayout.addComponent(templateBox, 3, 0)
         componentLayout.setComponentAlignment(templateBox, Alignment.BOTTOM_RIGHT)
 
-        final FormLayout subFormLayout = new FormLayout()
-
-        Button scanButton = new Button("scan", {
-            final int slots = presenter.acquireNumberOfSlots(field.value)
-            final String[] varNames = presenter.acquireSubstitutionVarNames(field.value)
-            pageComponent.slots = slots
-            if (slots > 0) {
-                templateBox.value = true
-            }
-
-            def vars = [:]
-            for (String name : varNames) {
-                vars.put(name, "")
-            }
-            pageComponent.substitutionVariables = vars
-
-            container.makeSlots(theWholeForm)
-            makeSubstVarFields(subFormLayout, pageComponent.substitutionVariables)
-            presenter.savePage(page)
-        } as Button.ClickListener)
+        Button scanButton = new Button("scan", scanAction as Button.ClickListener)
         scanButton.immediate = true
         scanButton.setSizeUndefined()
 
-        final HorizontalLayout innerLayout = new HorizontalLayout(scanButton, subFormLayout)
+        final HorizontalLayout innerLayout = new HorizontalLayout(scanButton, substitutionVarsLayout)
         componentLayout.addComponent(innerLayout, 0, 1)
-        innerLayout.setComponentAlignment(subFormLayout, Alignment.TOP_RIGHT)
+        innerLayout.setComponentAlignment(substitutionVarsLayout, Alignment.TOP_RIGHT)
 
-        makeSubstVarFields(subFormLayout, pageComponent.substitutionVariables)
+        makeSubstVarFields(substitutionVarsLayout, pageComponent.substitutionVariables)
 
+    }
+
+
+    def scanAction = {
+        final int slots = presenter.acquireNumberOfSlots(field.value)
+        final String[] varNames = presenter.acquireSubstitutionVarNames(field.value)
+        pageComponent.slots = slots
+        if (slots > 0) {
+            templateBox.value = true
+        }
+
+        def vars = [:]
+        for (String name : varNames) {
+            vars.put(name, "")
+        }
+        pageComponent.substitutionVariables = vars
+
+        container.makeSlots(theWholeForm)
+        makeSubstVarFields(substitutionVarsLayout, pageComponent.substitutionVariables)
+        presenter.savePage(page)
     }
 
     def removeAction = {
