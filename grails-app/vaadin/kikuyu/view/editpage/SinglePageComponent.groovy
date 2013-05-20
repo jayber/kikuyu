@@ -19,6 +19,7 @@ class SinglePageComponent extends VerticalLayout {
     private Layout theWholeForm
     private FormLayout substitutionVarsLayout
     private CheckBox templateBox
+    private TextField urlField
 
     SinglePageComponent(PageComponent pageComponent, Layout theWholeForm, KikuyuPresenter presenter, Page page, EditPageView container) {
 
@@ -34,9 +35,9 @@ class SinglePageComponent extends VerticalLayout {
         this.addComponent(componentLayout)
         componentLayout.spacing = true
 
-        TextField field = new TextField("Component URL", new MethodProperty(pageComponent, "url"));
-        container.setUpField(field)
-        componentLayout.addComponent(field, 0, 0)
+        urlField = new TextField("Component URL", new MethodProperty(pageComponent, "url"));
+        container.setUpField(urlField)
+        componentLayout.addComponent(urlField, 0, 0)
 
         final Button removeButton = new Button("", removeAction as Button.ClickListener)
         removeButton.setStyleName(Runo.BUTTON_LINK)
@@ -78,8 +79,8 @@ class SinglePageComponent extends VerticalLayout {
 
 
     def scanAction = {
-        final int slots = presenter.acquireNumberOfSlots(field.value)
-        final String[] varNames = presenter.acquireSubstitutionVarNames(field.value)
+        final int slots = presenter.acquireNumberOfSlots(urlField.value)
+        final String[] varNames = presenter.acquireSubstitutionVarNames(urlField.value)
         pageComponent.slots = slots
         if (slots > 0) {
             templateBox.value = true

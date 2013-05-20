@@ -35,7 +35,6 @@ class SinglePageComponentTest {
     @Test
     public void testInit() throws Exception {
 
-
         target = new SinglePageComponent(pageComponent, mockControlLayout.createMock(), mockControlPresenter.createMock(), page, mockControlContainer.createMock())
 
         def layout = target.getComponent(0)
@@ -70,6 +69,23 @@ class SinglePageComponentTest {
         target = new SinglePageComponent(pageComponent, mockControlLayout.createMock(), mockControlPresenter.createMock(), page, mockControlContainer.createMock())
 
         target.removeAction()
+
+    }
+
+    @Test
+    public void testScan() throws Exception {
+
+        mockControlPresenter.demand.acquireNumberOfSlots() { String url -> 1 }
+        mockControlPresenter.demand.acquireSubstitutionVarNames() { String url -> ["var1", "var2"].toArray(new String[0]) }
+        mockControlPresenter.demand.savePage() {}
+        mockControlContainer.demand.makeSlots() {}
+        mockControlPresenter.demand.savePage() {}
+        mockControlContainer.demand.setUpFieldInner(2) {}
+
+        target = new SinglePageComponent(pageComponent, mockControlLayout.createMock(), mockControlPresenter.createMock(), page, mockControlContainer.createMock())
+
+        target.scanAction()
+        assert pageComponent.substitutionVariables == [var1: "", var2: ""]
 
     }
 }
