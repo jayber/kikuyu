@@ -114,6 +114,8 @@
     content you may choose. Below is a list of controllers that are currently deployed in this application,
     click on each to execute its default action:</p>
 
+    <h2>Kikuyu:</h2>
+
     <div role="navigation">
         <g:link uri="/ui">kikuyu ui</g:link>
     </div>
