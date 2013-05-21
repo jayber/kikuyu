@@ -43,4 +43,8 @@ public interface KikuyuPresenter {
     String[] acquireSubstitutionVarNames(String componentUrl)
 
     def getNavigateHomeAction()
+
+    def getScanAction()
+
+    def getRemoveAction()
 }

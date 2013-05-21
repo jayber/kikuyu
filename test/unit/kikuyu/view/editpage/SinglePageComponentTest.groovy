@@ -28,14 +28,12 @@ class SinglePageComponentTest {
         mockControlPresenter = mockFor(KikuyuPresenter)
         mockControlContainer = mockFor(EditPageView)
 
-        mockControlContainer.demand.setUpField() {}
-        mockControlContainer.demand.setUpFieldInner(2) {}
     }
 
     @Test
     public void testInit() throws Exception {
 
-        target = new SinglePageComponent(pageComponent, mockControlLayout.createMock(), mockControlPresenter.createMock(), page, mockControlContainer.createMock())
+        target = new SinglePageComponent(pageComponent, mockControlPresenter.createMock(), mockControlContainer.createMock())
 
         def layout = target.getComponent(0)
 
@@ -58,34 +56,5 @@ class SinglePageComponentTest {
         def substLayout = innerLayout.getComponent(1)
         def varLabel = substLayout.getComponent(0)
         assert varLabel.value == "Variables"
-    }
-
-    @Test
-    public void testRemove() throws Exception {
-
-        mockControlLayout.demand.removeComponent(1) { SinglePageComponent component -> }
-        mockControlPresenter.demand.savePage(1) {}
-
-        target = new SinglePageComponent(pageComponent, mockControlLayout.createMock(), mockControlPresenter.createMock(), page, mockControlContainer.createMock())
-
-        target.removeAction()
-
-    }
-
-    @Test
-    public void testScan() throws Exception {
-
-        mockControlPresenter.demand.acquireNumberOfSlots() { String url -> 1 }
-        mockControlPresenter.demand.acquireSubstitutionVarNames() { String url -> ["var1", "var2"].toArray(new String[0]) }
-        mockControlPresenter.demand.savePage() {}
-        mockControlContainer.demand.makeSlots() {}
-        mockControlPresenter.demand.savePage() {}
-        mockControlContainer.demand.setUpFieldInner(2) {}
-
-        target = new SinglePageComponent(pageComponent, mockControlLayout.createMock(), mockControlPresenter.createMock(), page, mockControlContainer.createMock())
-
-        target.scanAction()
-        assert pageComponent.substitutionVariables == [var1: "", var2: ""]
-
     }
 }

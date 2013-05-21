@@ -5,118 +5,136 @@ import com.vaadin.data.util.MethodProperty
 import com.vaadin.server.ThemeResource
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.Runo
-import kikuyu.domain.Page
 import kikuyu.domain.PageComponent
 import kikuyu.view.KikuyuPresenter
+import util.FieldUtils
 import util.MapProperty
 
 class SinglePageComponent extends VerticalLayout {
 
-    private EditPageView container
-    private Page page
-    private PageComponent pageComponent
+    def EditPageView container
+    def PageComponent pageComponent
     private KikuyuPresenter presenter
-    private Layout theWholeForm
+
     private FormLayout substitutionVarsLayout
     private CheckBox templateBox
     private TextField urlField
 
-    SinglePageComponent(PageComponent pageComponent, Layout theWholeForm, KikuyuPresenter presenter, Page page, EditPageView container) {
+    //bean constructor needed by MockFor
+    SinglePageComponent() {
+    }
 
-        this.theWholeForm = theWholeForm
+    SinglePageComponent(PageComponent pageComponent, KikuyuPresenter presenter, EditPageView container) {
+
         this.presenter = presenter
         this.pageComponent = pageComponent
-        this.page = page
         this.container = container
 
+        GridLayout componentLayout = createLayouts()
+
+        createUrlField(pageComponent, componentLayout)
+
+        createRemoveButton(presenter, componentLayout)
+
+        createAcceptPostCheckBox(pageComponent, container, presenter, componentLayout)
+
+        createTemplateCheckbox(pageComponent, container, presenter, componentLayout)
+
+        createScanAndVariables(presenter, pageComponent, componentLayout)
+    }
+
+    private void createScanAndVariables(KikuyuPresenter presenter, PageComponent pageComponent, GridLayout componentLayout) {
+        def innerLayout = createScanButton(presenter)
+        innerLayout.addComponent(substitutionVarsLayout)
+        makeSubstVarFields(pageComponent.substitutionVariables)
+        componentLayout.addComponent(innerLayout, 0, 1)
+    }
+
+    private GridLayout createLayouts() {
         substitutionVarsLayout = new FormLayout()
 
         final GridLayout componentLayout = new GridLayout(4, 2)
         this.addComponent(componentLayout)
         componentLayout.spacing = true
+        return componentLayout
+    }
 
-        urlField = new TextField("Component URL", new MethodProperty(pageComponent, "url"));
-        container.setUpField(urlField)
-        componentLayout.addComponent(urlField, 0, 0)
+    private Layout createScanButton(KikuyuPresenter presenter) {
+        Button scanButton = new Button("scan", { presenter.scanAction(this) } as Button.ClickListener)
+        scanButton.immediate = true
+        scanButton.setSizeUndefined()
+        HorizontalLayout layout = new HorizontalLayout(scanButton)
+        layout
+    }
 
-        final Button removeButton = new Button("", removeAction as Button.ClickListener)
+    private void createTemplateCheckbox(PageComponent pageComponent, EditPageView container, KikuyuPresenter presenter, GridLayout componentLayout) {
+        templateBox = new CheckBox("Template?", new MethodProperty(pageComponent, "template"))
+        templateBox.immediate = true
+        templateBox.addValueChangeListener({
+            templateBox.commit()
+            presenter.savePage(container.page)
+        } as Property.ValueChangeListener)
+        componentLayout.addComponent(templateBox, 3, 0)
+        componentLayout.setComponentAlignment(templateBox, Alignment.BOTTOM_RIGHT)
+    }
+
+    private void createAcceptPostCheckBox(PageComponent pageComponent, EditPageView container, KikuyuPresenter presenter, GridLayout componentLayout) {
+        CheckBox box = new CheckBox("Accept POSTs?", new MethodProperty(pageComponent, "acceptPost"))
+        box.immediate = true
+        box.addValueChangeListener({
+            box.commit()
+            presenter.savePage(container.page)
+        } as Property.ValueChangeListener)
+        componentLayout.addComponent(box, 2, 0)
+        componentLayout.setComponentAlignment(box, Alignment.BOTTOM_RIGHT)
+    }
+
+    private void createRemoveButton(presenter, GridLayout componentLayout) {
+        final Button removeButton = new Button("", { presenter.removeAction(this) } as Button.ClickListener)
         removeButton.setStyleName(Runo.BUTTON_LINK)
         removeButton.setIcon(new ThemeResource("minus_sign.png"))
         removeButton.description = "remove component"
 
         componentLayout.addComponent(removeButton, 1, 0)
         componentLayout.setComponentAlignment(removeButton, Alignment.BOTTOM_RIGHT)
-
-        CheckBox box = new CheckBox("Accept POSTs?", new MethodProperty(pageComponent, "acceptPost"))
-        box.immediate = true
-        box.addValueChangeListener({
-            box.commit()
-            presenter.savePage(page)
-        } as Property.ValueChangeListener)
-        componentLayout.addComponent(box, 2, 0)
-        componentLayout.setComponentAlignment(box, Alignment.BOTTOM_RIGHT)
-
-        templateBox = new CheckBox("Template?", new MethodProperty(pageComponent, "template"))
-        templateBox.immediate = true
-        templateBox.addValueChangeListener({
-            templateBox.commit()
-            presenter.savePage(page)
-        } as Property.ValueChangeListener)
-        componentLayout.addComponent(templateBox, 3, 0)
-        componentLayout.setComponentAlignment(templateBox, Alignment.BOTTOM_RIGHT)
-
-        Button scanButton = new Button("scan", scanAction as Button.ClickListener)
-        scanButton.immediate = true
-        scanButton.setSizeUndefined()
-
-        final HorizontalLayout innerLayout = new HorizontalLayout(scanButton, substitutionVarsLayout)
-        componentLayout.addComponent(innerLayout, 0, 1)
-        innerLayout.setComponentAlignment(substitutionVarsLayout, Alignment.TOP_RIGHT)
-
-        makeSubstVarFields(substitutionVarsLayout, pageComponent.substitutionVariables)
-
     }
 
-
-    def scanAction = {
-        final int slots = presenter.acquireNumberOfSlots(urlField.value)
-        final String[] varNames = presenter.acquireSubstitutionVarNames(urlField.value)
-        pageComponent.slots = slots
-        if (slots > 0) {
-            templateBox.value = true
-        }
-
-        def vars = [:]
-        for (String name : varNames) {
-            vars.put(name, "")
-        }
-        pageComponent.substitutionVariables = vars
-
-        container.makeSlots(theWholeForm)
-        makeSubstVarFields(substitutionVarsLayout, pageComponent.substitutionVariables)
-        presenter.savePage(page)
+    private void createUrlField(PageComponent pageComponent, GridLayout componentLayout) {
+        urlField = new TextField("Component URL", new MethodProperty(pageComponent, "url"));
+        FieldUtils.setUpField(urlField, presenter, container.page)
+        componentLayout.addComponent(urlField, 0, 0)
     }
 
-    def removeAction = {
-        theWholeForm.removeComponent(this)
-        page.pageComponents.remove(pageComponent)
-        presenter.savePage(page)
-    }
-
-    def makeSubstVarFields(Layout layout, Map data) {
-        layout.removeAllComponents()
+    private void makeSubstVarFields(Map data) {
+        substitutionVarsLayout.removeAllComponents()
         if (data != null && data.size() > 0) {
             final Label title = new Label("Variables")
             title.setStyleName(Runo.LABEL_SMALL)
-            layout.addComponent(title)
+            substitutionVarsLayout.addComponent(title)
 
             data.each {
                 final TextField field = new TextField(it.key, new MapProperty(bean: data, propertyName: it.key, propertyClass: String.class))
                 field.width = 250
-                container.setUpFieldInner(field)
-                layout.addComponent(field)
-                layout.setComponentAlignment(field, Alignment.TOP_LEFT)
+                FieldUtils.setUpFieldInner(field, presenter, container.page)
+                substitutionVarsLayout.addComponent(field)
+                substitutionVarsLayout.setComponentAlignment(field, Alignment.TOP_LEFT)
             }
         }
+    }
+
+    String getUrl() {
+        urlField.value
+    }
+
+    void setSlots(int slots) {
+        pageComponent.slots = slots
+        if (slots > 0) {
+            templateBox.value = true
+        }
+    }
+
+    void setSubstitutionVariables(Map vars) {
+        pageComponent.substitutionVariables = vars
+        makeSubstVarFields(pageComponent.substitutionVariables)
     }
 }

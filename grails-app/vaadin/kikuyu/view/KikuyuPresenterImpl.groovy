@@ -11,6 +11,7 @@ import kikuyu.domain.UrlMapping
 import kikuyu.service.PageService
 import kikuyu.service.UrlMappingService
 import kikuyu.view.editpage.EditPageView
+import kikuyu.view.editpage.SinglePageComponent
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -35,8 +36,7 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
 
     @Override
     Container getPageTableDataSource() {
-        return new NamedColumnContainer<UrlMapping>(pageService.listPages(),
-                Page, "name")
+        return new NamedColumnContainer<UrlMapping>(pageService.listPages(), Page, "name")
     }
 
     @Override
@@ -129,4 +129,24 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
     }
 
     def navigateHomeAction = { navigator.navigateTo("") }
+
+    def scanAction = { SinglePageComponent pageComponent ->
+        final int slots = acquireNumberOfSlots(pageComponent.getUrl())
+        final String[] varNames = acquireSubstitutionVarNames(pageComponent.getUrl())
+        pageComponent.slots = slots
+
+        def vars = [:]
+        for (String name : varNames) {
+            vars.put(name, "")
+        }
+        pageComponent.substitutionVariables = vars
+
+        pageComponent.container.makeSlots()
+        savePage(pageComponent.container.page)
+    }
+
+    def removeAction = { SinglePageComponent pageComponent ->
+        pageComponent.container.removePageComponent(pageComponent)
+        savePage(pageComponent.container.page)
+    }
 }

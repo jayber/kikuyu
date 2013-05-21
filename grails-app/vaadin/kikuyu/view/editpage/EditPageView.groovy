@@ -1,6 +1,5 @@
 package kikuyu.view.editpage
 
-import com.vaadin.data.Property
 import com.vaadin.data.util.MethodProperty
 import com.vaadin.navigator.View
 import com.vaadin.navigator.ViewChangeListener
@@ -9,11 +8,14 @@ import com.vaadin.ui.themes.Runo
 import kikuyu.domain.Page
 import kikuyu.domain.PageComponent
 import kikuyu.view.KikuyuPresenter
+import util.FieldUtils
 
 class EditPageView extends VerticalLayout implements View {
     private KikuyuPresenter presenter
-    private Page page
+    public Page page
+    private FormLayout layout
 
+    //bean constructor needed by MockFor
     EditPageView() {
     }
 
@@ -27,7 +29,7 @@ class EditPageView extends VerticalLayout implements View {
     }
 
     private void createForm() {
-        final FormLayout layout = new FormLayout()
+        layout = new FormLayout()
         addComponent(layout)
 
         createNameField(layout)
@@ -56,7 +58,7 @@ class EditPageView extends VerticalLayout implements View {
     private void createNameField(FormLayout layout) {
         TextField field = new TextField("Name", new MethodProperty(page, "name"))
         layout.addComponent(field);
-        setUpField(field)
+        FieldUtils.setUpField(field, presenter, page)
     }
 
     private void createPageComponentAndField(layout) {
@@ -66,12 +68,12 @@ class EditPageView extends VerticalLayout implements View {
     }
 
     private void createNewPageComponentField(PageComponent pageComponent, Layout layout) {
-        def component = new SinglePageComponent(pageComponent, layout, presenter, page, this)
+        def component = new SinglePageComponent(pageComponent, presenter, this)
         layout.addComponent(component);
     }
 
 
-    def makeSlots(theWholeForm) {
+    def makeSlots() {
         final List<PageComponent> components = page.pageComponents
         int noComponents = components.size()
 
@@ -84,23 +86,14 @@ class EditPageView extends VerticalLayout implements View {
         final int diff = requiredSlots - noComponents
         if (diff > 0) {
             for (int i = 0; i < diff; i++) {
-                createPageComponentAndField(theWholeForm)
+                createPageComponentAndField(layout)
             }
         }
     }
 
-    def setUpField(Field field) {
-        field.width = 500
-        setUpFieldInner(field)
-    }
-
-    def setUpFieldInner(Field field) {
-        field.nullRepresentation = ""
-        field.immediate = true
-        field.addValueChangeListener({
-            field.commit()
-            presenter.savePage(page)
-        } as Property.ValueChangeListener)
+    void removePageComponent(SinglePageComponent pageComponent) {
+        layout.removeComponent(pageComponent)
+        page.pageComponents.remove(pageComponent.pageComponent)
     }
 
     @Override

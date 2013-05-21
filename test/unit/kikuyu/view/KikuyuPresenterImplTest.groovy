@@ -17,6 +17,7 @@ import kikuyu.domain.UrlMapping
 import kikuyu.service.PageService
 import kikuyu.service.UrlMappingService
 import kikuyu.view.editpage.EditPageView
+import kikuyu.view.editpage.SinglePageComponent
 import org.junit.Before
 import org.junit.Test
 
@@ -252,7 +253,71 @@ class KikuyuPresenterImplTest {
         final Object factoryInstance = mockFactory.createMock()
 
         target.createNewUrlMapping(tableMock, factoryInstance)
+    }
 
+    @Test
+    public void testScan() throws Exception {
+
+        final String testUrl = "testUrl"
+
+        def page = new Page()
+        def mockForEditPageView = new MockFor(EditPageView)
+        mockForEditPageView.demand.makeSlots() {}
+        mockForEditPageView.demand.getPage() { page }
+        def editPageViewMockInstance = mockForEditPageView.proxyInstance()
+
+        MockFor mockForSinglePageComponent = new MockFor(SinglePageComponent)
+        mockForSinglePageComponent.demand.getUrl(2) { testUrl }
+        mockForSinglePageComponent.demand.setSlots() { int i ->
+            assert 0 == i
+        }
+        mockForSinglePageComponent.demand.setSubstitutionVariables() { Map map -> }
+        mockForSinglePageComponent.demand.getContainer(2) { editPageViewMockInstance }
+
+        final GrailsMock mockRetriever = mockFor(HtmlRetriever)
+        mockRetriever.demand.retrieveHtml(2) { String url ->
+            assert testUrl == url
+            "test html"
+        }
+        target.retriever = mockRetriever.createMock()
+
+        def pageServiceMockInstance = setUpPageServiceSave(page)
+
+        def singlePageCompMockInstance = mockForSinglePageComponent.proxyInstance()
+        target.scanAction(singlePageCompMockInstance)
+
+        mockForSinglePageComponent.verify(singlePageCompMockInstance)
+        mockForEditPageView.verify(editPageViewMockInstance)
+        pageService.verify(pageServiceMockInstance)
+    }
+
+    private GroovyObject setUpPageServiceSave(Page page) {
+        pageService.demand.savePage(1) { Page page1 -> assert page == page1 }
+        final GroovyObject pageServiceMockInstance = pageService.proxyInstance()
+        target.pageService = pageServiceMockInstance
+        return pageServiceMockInstance
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+
+        def page = new Page()
+        def mockForEditPageView = new MockFor(EditPageView)
+        mockForEditPageView.demand.removePageComponent() {}
+        mockForEditPageView.demand.getPage() { page }
+        def editPageViewMockInstance = mockForEditPageView.proxyInstance()
+
+        MockFor mockForSinglePageComponent = new MockFor(SinglePageComponent)
+        mockForSinglePageComponent.demand.getContainer(2) { editPageViewMockInstance }
+        def singlePageMockInstance = mockForSinglePageComponent.proxyInstance()
+
+        def pageServiceMockInstance = setUpPageServiceSave(new Page())
+
+        target.removeAction(singlePageMockInstance)
+
+        mockForEditPageView.verify(editPageViewMockInstance)
+        mockForSinglePageComponent.verify(singlePageMockInstance)
+        pageService.verify(pageServiceMockInstance)
 
     }
 }
