@@ -11,7 +11,7 @@ import com.vaadin.ui.Field
 
 /**
  * This class renders a <code>com.vaadin.ui.ComboBox</code> field for properties called "page" (<code>kikuyu.domain.Page</code>)
- * properties and a <code>kikuyu.view.SpinnerField</code> for properties called "matchOrder" and only generates
+ * and a <code>kikuyu.view.SpinnerField</code> for properties called "matchOrder" and only generates
  * fields for the currently selected row in tables, i.e. only the current row is editable in editable mode.
  */
 class UrlMappingTableFieldFactory extends DefaultFieldFactory {

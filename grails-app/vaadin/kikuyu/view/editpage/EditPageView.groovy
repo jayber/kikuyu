@@ -15,7 +15,7 @@ class EditPageView extends VerticalLayout implements View {
     public Page page
     private FormLayout layout
 
-    //bean constructor needed by MockFor
+    //no arg constructor needed by MockFor
     EditPageView() {
     }
 
@@ -61,7 +61,7 @@ class EditPageView extends VerticalLayout implements View {
         FieldUtils.setUpField(field, presenter, page)
     }
 
-    private void createPageComponentAndField(layout) {
+    private void createPageComponentAndField(Layout layout) {
         final PageComponent pageComponent = new PageComponent()
         page.addPageComponent(pageComponent)
         createNewPageComponentField(pageComponent, layout)
@@ -73,7 +73,7 @@ class EditPageView extends VerticalLayout implements View {
     }
 
 
-    def makeSlots() {
+    public void makeSlots() {
         final List<PageComponent> components = page.pageComponents
         int noComponents = components.size()
 

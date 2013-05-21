@@ -1,1 +1,0 @@
-<div class="comp2">Component 2 is here #{ibble} #{dibble}</div>

@@ -20,7 +20,7 @@ class SinglePageComponent extends VerticalLayout {
     private CheckBox templateBox
     private TextField urlField
 
-    //bean constructor needed by MockFor
+    //no arg constructor needed by MockFor
     SinglePageComponent() {
     }
 
@@ -46,7 +46,7 @@ class SinglePageComponent extends VerticalLayout {
     private void createScanAndVariables(KikuyuPresenter presenter, PageComponent pageComponent, GridLayout componentLayout) {
         def innerLayout = createScanButton(presenter)
         innerLayout.addComponent(substitutionVarsLayout)
-        makeSubstVarFields(pageComponent.substitutionVariables)
+        makeSubstitutionVariableFields(pageComponent.substitutionVariables)
         componentLayout.addComponent(innerLayout, 0, 1)
     }
 
@@ -105,7 +105,7 @@ class SinglePageComponent extends VerticalLayout {
         componentLayout.addComponent(urlField, 0, 0)
     }
 
-    private void makeSubstVarFields(Map data) {
+    private void makeSubstitutionVariableFields(Map data) {
         substitutionVarsLayout.removeAllComponents()
         if (data != null && data.size() > 0) {
             final Label title = new Label("Variables")
@@ -135,6 +135,6 @@ class SinglePageComponent extends VerticalLayout {
 
     void setSubstitutionVariables(Map vars) {
         pageComponent.substitutionVariables = vars
-        makeSubstVarFields(pageComponent.substitutionVariables)
+        makeSubstitutionVariableFields(pageComponent.substitutionVariables)
     }
 }

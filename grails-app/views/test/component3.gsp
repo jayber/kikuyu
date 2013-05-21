@@ -1,1 +1,0 @@
-<div class="comp3">Component 3 is here</div>
