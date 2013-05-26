@@ -7,6 +7,7 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.VerticalLayout
 import kikuyu.domain.Page
 import kikuyu.domain.UrlMapping
+import kikuyu.view.editpage.SinglePageComponent
 
 public interface KikuyuPresenter {
 
@@ -47,4 +48,10 @@ public interface KikuyuPresenter {
     def getScanAction()
 
     def getRemoveAction()
+
+    def deleteUrlMapping(Table source, UrlMapping urlMapping)
+
+    def deletePage(Table table, Page page)
+
+    def addSubstitutionVar(SinglePageComponent component)
 }

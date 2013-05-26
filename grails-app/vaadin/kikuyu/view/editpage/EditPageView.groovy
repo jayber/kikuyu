@@ -51,7 +51,7 @@ class EditPageView extends VerticalLayout implements View {
 
     private void createPageComponents(FormLayout layout) {
         for (PageComponent pageComponent : page.pageComponents) {
-            createNewPageComponentField(pageComponent, layout)
+            createNewPageComponentDisplay(pageComponent, layout)
         }
     }
 
@@ -64,10 +64,10 @@ class EditPageView extends VerticalLayout implements View {
     private void createPageComponentAndField(Layout layout) {
         final PageComponent pageComponent = new PageComponent()
         page.addPageComponent(pageComponent)
-        createNewPageComponentField(pageComponent, layout)
+        createNewPageComponentDisplay(pageComponent, layout)
     }
 
-    private void createNewPageComponentField(PageComponent pageComponent, Layout layout) {
+    private void createNewPageComponentDisplay(PageComponent pageComponent, Layout layout) {
         def component = new SinglePageComponent(pageComponent, presenter, this)
         layout.addComponent(component);
     }

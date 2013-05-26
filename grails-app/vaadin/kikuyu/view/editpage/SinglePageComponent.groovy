@@ -16,7 +16,7 @@ class SinglePageComponent extends VerticalLayout {
     def PageComponent pageComponent
     private KikuyuPresenter presenter
 
-    private FormLayout substitutionVarsLayout
+    private VerticalLayout substitutionVarsLayout
     private CheckBox templateBox
     private TextField urlField
 
@@ -44,14 +44,16 @@ class SinglePageComponent extends VerticalLayout {
     }
 
     private void createScanAndVariables(KikuyuPresenter presenter, PageComponent pageComponent, GridLayout componentLayout) {
-        def innerLayout = createScanButton(presenter)
-        innerLayout.addComponent(substitutionVarsLayout)
+        HorizontalLayout layout = new HorizontalLayout()
+        layout.setWidth("100%")
+        def varLayout = createScanButton(presenter, layout)
+        varLayout.addComponent(substitutionVarsLayout)
         makeSubstitutionVariableFields(pageComponent.substitutionVariables)
-        componentLayout.addComponent(innerLayout, 0, 1)
+        componentLayout.addComponent(layout, 0, 1)
     }
 
     private GridLayout createLayouts() {
-        substitutionVarsLayout = new FormLayout()
+        substitutionVarsLayout = new VerticalLayout()
 
         final GridLayout componentLayout = new GridLayout(4, 2)
         this.addComponent(componentLayout)
@@ -59,12 +61,20 @@ class SinglePageComponent extends VerticalLayout {
         return componentLayout
     }
 
-    private Layout createScanButton(KikuyuPresenter presenter) {
+    private Layout createScanButton(KikuyuPresenter presenter, Layout layout) {
         Button scanButton = new Button("scan", { presenter.scanAction(this) } as Button.ClickListener)
         scanButton.immediate = true
         scanButton.setSizeUndefined()
-        HorizontalLayout layout = new HorizontalLayout(scanButton)
-        layout
+        layout.addComponent(scanButton)
+        final VerticalLayout varsLayout = new VerticalLayout()
+        varsLayout.setWidth("100%")
+        layout.addComponent(varsLayout)
+        final Button addVarButton = new Button("add variable", { presenter.addSubstitutionVar(this) } as Button.ClickListener)
+        addVarButton.setStyleName(Runo.BUTTON_SMALL)
+        addVarButton.immediate = true
+        varsLayout.addComponent(addVarButton)
+        varsLayout.setComponentAlignment(addVarButton, Alignment.TOP_RIGHT)
+        varsLayout
     }
 
     private void createTemplateCheckbox(PageComponent pageComponent, EditPageView container, KikuyuPresenter presenter, GridLayout componentLayout) {
@@ -89,7 +99,7 @@ class SinglePageComponent extends VerticalLayout {
         componentLayout.setComponentAlignment(box, Alignment.BOTTOM_RIGHT)
     }
 
-    private void createRemoveButton(presenter, GridLayout componentLayout) {
+    private void createRemoveButton(KikuyuPresenter presenter, GridLayout componentLayout) {
         final Button removeButton = new Button("", { presenter.removeAction(this) } as Button.ClickListener)
         removeButton.setStyleName(Runo.BUTTON_LINK)
         removeButton.setIcon(new ThemeResource("minus_sign.png"))
@@ -113,13 +123,29 @@ class SinglePageComponent extends VerticalLayout {
             substitutionVarsLayout.addComponent(title)
 
             data.each {
-                final TextField field = new TextField(it.key, new MapProperty(bean: data, propertyName: it.key, propertyClass: String.class))
+                final String varName = it.key
+                final TextField field = new TextField(varName, new MapProperty(bean: data, propertyName: varName, propertyClass: String.class))
                 field.width = 250
                 FieldUtils.setUpFieldInner(field, presenter, container.page)
-                substitutionVarsLayout.addComponent(field)
-                substitutionVarsLayout.setComponentAlignment(field, Alignment.TOP_LEFT)
+
+                final Button removeButton = new Button("", { removeVariable(varName) } as Button.ClickListener)
+                removeButton.setStyleName(Runo.BUTTON_LINK)
+                removeButton.setIcon(new ThemeResource("minus_sign_grey.png"))
+                removeButton.description = "remove variable"
+
+                final HorizontalLayout layout = new HorizontalLayout(field, removeButton)
+                layout.setComponentAlignment(removeButton, Alignment.BOTTOM_RIGHT)
+                layout.spacing = true
+
+                substitutionVarsLayout.addComponent(layout)
+                substitutionVarsLayout.setComponentAlignment(layout, Alignment.TOP_RIGHT)
             }
         }
+    }
+
+    def removeVariable(String varName) {
+        pageComponent.substitutionVariables.remove(varName)
+        makeSubstitutionVariableFields(pageComponent.substitutionVariables)
     }
 
     String getUrl() {
@@ -135,6 +161,11 @@ class SinglePageComponent extends VerticalLayout {
 
     void setSubstitutionVariables(Map vars) {
         pageComponent.substitutionVariables = vars
+        makeSubstitutionVariableFields(pageComponent.substitutionVariables)
+    }
+
+    void addSubstitutionVariable(String varName) {
+        pageComponent.substitutionVariables.put(varName, "")
         makeSubstitutionVariableFields(pageComponent.substitutionVariables)
     }
 }

@@ -36,4 +36,8 @@ class UrlMappingService {
             -1
         }
     }
+
+    void deleteMapping(UrlMapping urlMapping) {
+        urlMapping.delete(failOnError: true, flush: true)
+    }
 }

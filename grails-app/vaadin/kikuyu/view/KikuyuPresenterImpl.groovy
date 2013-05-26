@@ -6,6 +6,7 @@ import com.vaadin.navigator.Navigator
 import com.vaadin.ui.Table
 import com.vaadin.ui.UI
 import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.Window
 import kikuyu.domain.Page
 import kikuyu.domain.UrlMapping
 import kikuyu.service.PageService
@@ -81,7 +82,8 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
     void buildNavigator(VerticalLayout layout, UI ui) {
         def navigator = new Navigator(ui, layout)
         this.navigator = navigator
-        navigator.addView("", new DataTablesView(this))
+        final DataTablesView tablesView = new DataTablesView(this)
+        navigator.addView("", tablesView)
     }
 
     def pageTableEventAction = { ItemClickEvent event ->
@@ -128,7 +130,9 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
         return result
     }
 
-    def navigateHomeAction = { navigator.navigateTo("") }
+    def navigateHomeAction = {
+        navigator.navigateTo("")
+    }
 
     def scanAction = { SinglePageComponent pageComponent ->
         final int slots = acquireNumberOfSlots(pageComponent.getUrl())
@@ -148,5 +152,30 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
     def removeAction = { SinglePageComponent pageComponent ->
         pageComponent.container.removePageComponent(pageComponent)
         savePage(pageComponent.container.page)
+    }
+
+    @Override
+    def deleteUrlMapping(Table source, UrlMapping urlMapping) {
+        source.removeItem(urlMapping)
+        urlMappingService.deleteMapping(urlMapping)
+    }
+
+    @Override
+    def deletePage(Table table, Page page) {
+        table.removeItem(page)
+        pageService.deletePage(page)
+    }
+
+    @Override
+    def addSubstitutionVar(SinglePageComponent component) {
+        final Window window
+
+        final NamePrompt prompt = new NamePrompt({ String value ->
+            component.addSubstitutionVariable(value)
+            component.getUI().removeWindow(window)
+        })
+        window = new Window("Name for variable", prompt)
+        window.modal = true
+        component.getUI().addWindow(window)
     }
 }

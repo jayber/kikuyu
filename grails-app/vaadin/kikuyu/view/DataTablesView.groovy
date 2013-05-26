@@ -4,6 +4,7 @@ import com.vaadin.event.ItemClickEvent
 import com.vaadin.grails.Grails
 import com.vaadin.navigator.View
 import com.vaadin.navigator.ViewChangeListener
+import com.vaadin.server.ThemeResource
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.Runo
 
@@ -25,8 +26,7 @@ class DataTablesView extends VerticalLayout implements View {
 
     @Override
     void enter(ViewChangeListener.ViewChangeEvent event) {
-        pageTable.markAsDirtyRecursive()
-        urlMappingTable.markAsDirtyRecursive()
+        pageTable.containerDataSource = presenter.pageTableDataSource
     }
 
     private Component buildTabs() {
@@ -42,6 +42,17 @@ class DataTablesView extends VerticalLayout implements View {
         pageTable = new Table()
         pageTable.setSizeFull()
         pageTable.setContainerDataSource(presenter.pageTableDataSource)
+        pageTable.addGeneratedColumn("Delete", new Table.ColumnGenerator() {
+            @Override
+            Object generateCell(Table source, Object itemId, Object columnId) {
+                final Button removeButton = new Button("", { presenter.deletePage(source, itemId) } as Button.ClickListener)
+                removeButton.setStyleName(Runo.BUTTON_LINK)
+                removeButton.setIcon(new ThemeResource("cross.png"))
+                removeButton.description = "delete"
+                return removeButton
+            }
+        })
+        pageTable.setColumnWidth("Delete", 50)
 
         pageTable.addItemClickListener(presenter.pageTableEventAction as ItemClickEvent.ItemClickListener)
 
@@ -59,6 +70,17 @@ class DataTablesView extends VerticalLayout implements View {
         final factory = new UrlMappingTableFieldFactory(presenter: presenter)
         urlMappingTable.setTableFieldFactory(factory)
         urlMappingTable.setContainerDataSource(presenter.urlMappingTableDataSource)
+        urlMappingTable.addGeneratedColumn("Delete", new Table.ColumnGenerator() {
+            @Override
+            Object generateCell(Table source, Object itemId, Object columnId) {
+                final Button removeButton = new Button("", { presenter.deleteUrlMapping(source, itemId) } as Button.ClickListener)
+                removeButton.setStyleName(Runo.BUTTON_LINK)
+                removeButton.setIcon(new ThemeResource("cross.png"))
+                removeButton.description = "delete"
+                return removeButton
+            }
+        })
+        urlMappingTable.setColumnWidth("Delete", 50)
 
         urlMappingTable.addItemClickListener({ ItemClickEvent event ->
             presenter.handleUrlMappingTableClick(event, factory, urlMappingTable)
