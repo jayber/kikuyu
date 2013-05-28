@@ -12,6 +12,7 @@ import kikuyu.domain.UrlMapping
 import kikuyu.service.PageService
 import kikuyu.service.UrlMappingService
 import kikuyu.view.editpage.EditPageView
+import kikuyu.view.editpage.NamePrompt
 import kikuyu.view.editpage.SinglePageComponent
 
 import java.util.regex.Matcher

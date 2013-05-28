@@ -80,7 +80,7 @@ class DataTablesViewTest {
         assert table instanceof Table
         assert table.itemIds == rows
 
-        assert table.visibleColumns == ["pattern", "page", "matchOrder"]
+        assert table.visibleColumns == ["pattern", "page", "matchOrder", "Delete"]
 
         final button = layout.getComponent(1)
         assert button instanceof Button

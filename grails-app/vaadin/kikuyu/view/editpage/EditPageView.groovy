@@ -13,7 +13,7 @@ import util.FieldUtils
 class EditPageView extends VerticalLayout implements View {
     private KikuyuPresenter presenter
     public Page page
-    private FormLayout layout
+    def FormLayout layout
 
     //no arg constructor needed by MockFor
     EditPageView() {
@@ -61,7 +61,8 @@ class EditPageView extends VerticalLayout implements View {
         FieldUtils.setUpField(field, presenter, page)
     }
 
-    private void createPageComponentAndField(Layout layout) {
+    //default for test
+    void createPageComponentAndField(Layout layout) {
         final PageComponent pageComponent = new PageComponent()
         page.addPageComponent(pageComponent)
         createNewPageComponentDisplay(pageComponent, layout)

@@ -1,4 +1,4 @@
-package kikuyu.view
+package kikuyu.view.editpage
 
 import com.vaadin.data.Validator
 import com.vaadin.ui.*
@@ -7,9 +7,13 @@ import java.util.regex.Pattern
 
 class NamePrompt extends VerticalLayout {
     private static final Pattern pattern = ~/[a-zA-Z0-9\-_]+/
+    private Closure onSuccess
+    def TextField field
+    def Label validationMessage
 
     NamePrompt(def onSuccess) {
-        final TextField field = new TextField()
+        this.onSuccess = onSuccess
+        field = new TextField()
         field.inputPrompt = "name"
         field.required = true
         field.validationVisible = true
@@ -22,27 +26,28 @@ class NamePrompt extends VerticalLayout {
             }
         })
 
-        final Label validationMessage = new Label("error msg")
+        validationMessage = new Label("Enter a valid name")
         validationMessage.setStyleName("validation-fail")
         validationMessage.visible = false
 
-        final Button button = new Button("ok", {
-            boolean fail = false
-            try {
-                field.validate()
-            } catch (Validator.InvalidValueException e) {
-                fail = true
-                validationMessage.value = "Enter a valid name"
-                validationMessage.visible = true
-            }
-            if (!fail) {
-                onSuccess(field.value)
-            }
-        } as Button.ClickListener)
+        final Button button = new Button("ok", okAction as Button.ClickListener)
         final HorizontalLayout layout = new HorizontalLayout(field, button)
         layout.spacing = true
         this.addComponents(layout, validationMessage)
         spacing = true
         setMargin(true)
+    }
+
+    def okAction = {
+        boolean success = true
+        try {
+            field.validate()
+        } catch (Validator.InvalidValueException e) {
+            success = false
+            validationMessage.visible = true
+        }
+        if (success) {
+            onSuccess(field.value)
+        }
     }
 }

@@ -17,7 +17,7 @@ class SinglePageComponent extends VerticalLayout {
     private KikuyuPresenter presenter
 
     private VerticalLayout substitutionVarsLayout
-    private CheckBox templateBox
+    def CheckBox templateBox
     private TextField urlField
 
     //no arg constructor needed by MockFor
@@ -46,7 +46,7 @@ class SinglePageComponent extends VerticalLayout {
     private void createScanAndVariables(KikuyuPresenter presenter, PageComponent pageComponent, GridLayout componentLayout) {
         HorizontalLayout layout = new HorizontalLayout()
         layout.setWidth("100%")
-        def varLayout = createScanButton(presenter, layout)
+        def varLayout = createScanAndSubstVariables(presenter, layout)
         varLayout.addComponent(substitutionVarsLayout)
         makeSubstitutionVariableFields(pageComponent.substitutionVariables)
         componentLayout.addComponent(layout, 0, 1)
@@ -61,7 +61,7 @@ class SinglePageComponent extends VerticalLayout {
         return componentLayout
     }
 
-    private Layout createScanButton(KikuyuPresenter presenter, Layout layout) {
+    private Layout createScanAndSubstVariables(KikuyuPresenter presenter, Layout layout) {
         Button scanButton = new Button("scan", { presenter.scanAction(this) } as Button.ClickListener)
         scanButton.immediate = true
         scanButton.setSizeUndefined()

@@ -298,7 +298,6 @@ class KikuyuPresenterImplTest {
         return pageServiceMockInstance
     }
 
-    @Test
     public void testRemove() throws Exception {
 
         def page = new Page()
@@ -319,5 +318,39 @@ class KikuyuPresenterImplTest {
         mockForSinglePageComponent.verify(singlePageMockInstance)
         pageService.verify(pageServiceMockInstance)
 
+    }
+
+    public void testNavigateHome() throws Exception {
+
+        final Navigator navigator = mock(Navigator)
+        target.navigator = navigator
+
+        target.navigateHomeAction()
+
+        verify(navigator).navigateTo("")
+    }
+
+    public void testDeleteMapping() throws Exception {
+        Table source = mock(Table)
+        urlMappingService.demand.deleteMapping(1) {}
+        GroovyObject instance = urlMappingService.proxyInstance()
+        target.urlMappingService = instance
+        UrlMapping mapping = new UrlMapping()
+        target.deleteUrlMapping(source, mapping)
+
+        verify(source).removeItem(mapping)
+        urlMappingService.verify(instance)
+    }
+
+    public void testDeletePage() throws Exception {
+        Table source = mock(Table)
+        pageService.demand.deletePage(1) {}
+        GroovyObject instance = pageService.proxyInstance()
+        target.pageService = instance
+        Page page = new Page()
+        target.deletePage(source, page)
+
+        verify(source).removeItem(page)
+        pageService.verify(instance)
     }
 }
