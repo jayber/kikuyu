@@ -12,7 +12,7 @@ import util.FieldUtils
 
 class EditPageView extends VerticalLayout implements View {
     private KikuyuPresenter presenter
-    public Page page
+    def Page page
     def FormLayout layout
 
     //no arg constructor needed by MockFor
