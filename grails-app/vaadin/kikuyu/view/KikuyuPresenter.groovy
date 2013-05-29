@@ -54,4 +54,6 @@ public interface KikuyuPresenter {
     def deletePage(Table table, Page page)
 
     def addSubstitutionVar(SinglePageComponent component)
+
+    Properties getComponentUrlSymbolProperties()
 }

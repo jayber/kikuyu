@@ -34,14 +34,14 @@ class SinglePageComponentTest {
         def urlField = layout.getComponent(0, 0)
         assert urlField.value == "testUrl"
 
-        def delButton = layout.getComponent(1, 0)
+        def delButton = layout.getComponent(2, 0)
         assert delButton.icon.resourceId == "minus_sign.png"
 
-        def templateBox = layout.getComponent(2, 0)
-        assert templateBox.caption == "Accept POSTs?"
-
         def postBox = layout.getComponent(3, 0)
-        assert postBox.caption == "Template?"
+        assert postBox.caption == "Accept POSTs?"
+
+        def templateBox = layout.getComponent(4, 0)
+        assert templateBox.caption == "Template?"
 
         def innerLayout = layout.getComponent(0, 1)
         def scan = innerLayout.getComponent(0)

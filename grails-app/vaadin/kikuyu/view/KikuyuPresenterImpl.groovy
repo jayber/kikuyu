@@ -20,6 +20,7 @@ import java.util.regex.Pattern
 
 class KikuyuPresenterImpl implements KikuyuPresenter {
 
+    Properties componentUrlSymbolProperties
     Pattern slotPattern = ~"<div[^<>]*?location\\s*?>.*?</\\s*?div>"
     Pattern substVarPattern = ~/#\{(.*?)\}/
 

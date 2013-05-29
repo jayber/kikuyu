@@ -1,4 +1,4 @@
-package util
+package kikuyu.view.util
 
 import com.vaadin.data.Property
 import com.vaadin.data.util.AbstractProperty

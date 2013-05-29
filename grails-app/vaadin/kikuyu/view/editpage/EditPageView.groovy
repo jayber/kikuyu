@@ -8,7 +8,7 @@ import com.vaadin.ui.themes.Runo
 import kikuyu.domain.Page
 import kikuyu.domain.PageComponent
 import kikuyu.view.KikuyuPresenter
-import util.FieldUtils
+import kikuyu.view.util.FieldUtils
 
 class EditPageView extends VerticalLayout implements View {
     private KikuyuPresenter presenter
