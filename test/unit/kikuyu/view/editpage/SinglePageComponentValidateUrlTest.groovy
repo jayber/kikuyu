@@ -106,6 +106,21 @@ class SinglePageComponentValidateUrlTest {
         verifyNoMoreInteractions(validUrlImage, propertiesValidImage, invalidImage)
     }
 
+    public void testValidSymbolField2() throws Exception {
+
+        when(property.value).thenReturn("real/path/more")
+
+        target.validateUrl(event, validUrlImage, propertiesValidImage, invalidImage)
+
+        verify(validUrlImage).visible = false
+        verify(propertiesValidImage).visible = false
+        verify(invalidImage).visible = false
+
+        verify(propertiesValidImage).visible = true
+
+        verifyNoMoreInteractions(validUrlImage, propertiesValidImage, invalidImage)
+    }
+
     public void testInvalidSymbolField() throws Exception {
 
         when(property.value).thenReturn("test/path")
