@@ -1,10 +1,11 @@
-package kikuyu.view
+package kikuyu.view.tables
 
 import com.vaadin.data.Container
 import com.vaadin.data.Property
 import com.vaadin.data.util.MethodProperty
 import com.vaadin.ui.*
-import kikuyu.view.SpinnerButton.ClickEvent
+import kikuyu.view.KikuyuPresenter
+import kikuyu.view.tables.SpinnerButton.ClickEvent
 
 class SpinnerField extends CustomField {
 

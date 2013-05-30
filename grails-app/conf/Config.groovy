@@ -77,6 +77,8 @@ log4j = {
     //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
     //}
 
+    debug 'kikuyu'
+
     info 'grails.app.conf.resources'
 
     error 'org.codehaus.groovy.grails.web.servlet',        // controllers

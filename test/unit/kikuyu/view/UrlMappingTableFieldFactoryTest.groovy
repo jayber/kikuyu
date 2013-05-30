@@ -8,6 +8,8 @@ import grails.test.mixin.support.GrailsUnitTestMixin
 import kikuyu.TestFixtures
 import kikuyu.domain.Page
 import kikuyu.domain.UrlMapping
+import kikuyu.view.tables.SpinnerField
+import kikuyu.view.tables.UrlMappingTableFieldFactory
 import org.junit.Before
 
 @TestMixin(GrailsUnitTestMixin)

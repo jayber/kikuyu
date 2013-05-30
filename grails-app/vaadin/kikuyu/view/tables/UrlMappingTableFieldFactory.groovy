@@ -1,4 +1,4 @@
-package kikuyu.view
+package kikuyu.view.tables
 
 import com.vaadin.data.Container
 import com.vaadin.data.Property
@@ -8,6 +8,7 @@ import com.vaadin.ui.ComboBox
 import com.vaadin.ui.Component
 import com.vaadin.ui.DefaultFieldFactory
 import com.vaadin.ui.Field
+import kikuyu.view.KikuyuPresenter
 
 /**
  * This class renders a <code>com.vaadin.ui.ComboBox</code> field for properties called "page" (<code>kikuyu.domain.Page</code>)

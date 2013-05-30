@@ -9,14 +9,13 @@ import kikuyu.domain.PageComponent
 import kikuyu.view.KikuyuPresenter
 import kikuyu.view.util.FieldUtils
 import kikuyu.view.util.MapProperty
-
-import java.util.regex.Pattern
+import org.apache.commons.lang.StringUtils
 
 class SinglePageComponent extends VerticalLayout {
 
-    private static final Pattern validUrlPattern = ~"^http://[\\d\\w\\.-_/]+"
     private static final String VALID_URL_IMAGE_MSG = "Valid url"
-    private static final String VALID_PATHSYMBOL_IMAGE_MSG = "Valid path symbol"
+    private static final String VALID_PATHSYMBOL_IMAGE_MSG = "Valid url symbol"
+    private static final String INVALID_PATHSYMBOL_IMAGE_MSG = "Neither valid URL nor valid symbol"
 
     def EditPageView container
     def PageComponent pageComponent
@@ -52,7 +51,7 @@ class SinglePageComponent extends VerticalLayout {
     private void createScanAndVariables(KikuyuPresenter presenter, PageComponent pageComponent, GridLayout componentLayout) {
         HorizontalLayout layout = new HorizontalLayout()
         layout.setWidth("100%")
-        def varLayout = createScanAndSubstVariables(presenter, layout)
+        def varLayout = createScanAndAddVariablesButtons(presenter, layout)
         varLayout.addComponent(substitutionVarsLayout)
         makeSubstitutionVariableFields(pageComponent.substitutionVariables)
         componentLayout.addComponent(layout, 0, 1)
@@ -67,7 +66,7 @@ class SinglePageComponent extends VerticalLayout {
         return componentLayout
     }
 
-    private Layout createScanAndSubstVariables(KikuyuPresenter presenter, Layout layout) {
+    private Layout createScanAndAddVariablesButtons(KikuyuPresenter presenter, Layout layout) {
         Button scanButton = new Button("scan", { presenter.scanAction(this) } as Button.ClickListener)
         scanButton.immediate = true
         scanButton.setSizeUndefined()
@@ -105,6 +104,31 @@ class SinglePageComponent extends VerticalLayout {
         componentLayout.setComponentAlignment(box, Alignment.BOTTOM_RIGHT)
     }
 
+    private void createUrlField(PageComponent pageComponent, GridLayout componentLayout) {
+        urlField = new TextField("Component URL", new MethodProperty(pageComponent, "url"));
+        FieldUtils.setUpField(urlField, presenter, container.page)
+
+        Image validImage = makeValidationImage("green_tick.png", VALID_URL_IMAGE_MSG)
+        Image propertiesValidImage = makeValidationImage("properties_tick.png", VALID_PATHSYMBOL_IMAGE_MSG)
+        Image invalidImage = makeValidationImage("red_cross.png", INVALID_PATHSYMBOL_IMAGE_MSG)
+
+        def layout = new HorizontalLayout(validImage, propertiesValidImage, invalidImage)
+        layout.spacing = true
+
+        urlField.addValueChangeListener({ validateUrl(it, validImage, propertiesValidImage, invalidImage) } as Property.ValueChangeListener)
+        componentLayout.addComponent(urlField, 0, 0)
+        componentLayout.addComponent(layout, 1, 0)
+    }
+
+    private Image makeValidationImage(String imageName, String msg) {
+        Image validImage = new Image("", new ThemeResource(imageName))
+        validImage.visible = false
+        validImage.alternateText = msg
+        validImage.description = msg
+        validImage.width = "24px"
+        return validImage
+    }
+
     private void createRemoveButton(KikuyuPresenter presenter, GridLayout componentLayout) {
         final Button removeButton = new Button("", { presenter.removeAction(this) } as Button.ClickListener)
         removeButton.setStyleName(Runo.BUTTON_LINK)
@@ -115,40 +139,18 @@ class SinglePageComponent extends VerticalLayout {
         componentLayout.setComponentAlignment(removeButton, Alignment.BOTTOM_RIGHT)
     }
 
-    private void createUrlField(PageComponent pageComponent, GridLayout componentLayout) {
-        urlField = new TextField("Component URL", new MethodProperty(pageComponent, "url"));
-        FieldUtils.setUpField(urlField, presenter, container.page)
-
-        Image validImage = new Image("", new ThemeResource("green_tick.png"))
-        validImage.visible = false
-        validImage.alternateText = VALID_URL_IMAGE_MSG
-        validImage.description = VALID_URL_IMAGE_MSG
-        validImage.width = "24px"
-
-        Image propertiesValidImage = new Image("", new ThemeResource("properties_tick.png"))
-        propertiesValidImage.visible = false
-        propertiesValidImage.alternateText = VALID_PATHSYMBOL_IMAGE_MSG
-        propertiesValidImage.description = VALID_PATHSYMBOL_IMAGE_MSG
-        propertiesValidImage.width = "24px"
-
-        def layout = new HorizontalLayout(validImage, propertiesValidImage)
-        layout.spacing = true
-
-        urlField.addValueChangeListener({ validateUrl(it, validImage, propertiesValidImage) } as Property.ValueChangeListener)
-        componentLayout.addComponent(urlField, 0, 0)
-        componentLayout.addComponent(layout, 1, 0)
-    }
-
-    def validateUrl(Property.ValueChangeEvent e, Image validUrlImage, Image propertiesValidImage) {
+    def validateUrl(Property.ValueChangeEvent e, Image validUrlImage, Image propertiesValidImage, Image invalidImage) {
         String value = e.property.value
         validUrlImage.visible = false
         propertiesValidImage.visible = false
-        if (validUrlPattern.matcher(value).matches()) {
-            validUrlImage.visible = true
-        } else {
-            String[] parts = value.split("/")
-            if (presenter.componentUrlSymbolProperties.containsKey(parts[0])) {
+        invalidImage.visible = false
+        if (StringUtils.isNotEmpty(value)) {
+            if (presenter.urlSymbolResolver.isValidConcreteUrl(value)) {
+                validUrlImage.visible = true
+            } else if (presenter.urlSymbolResolver.isValidSymbolicUrl(value)) {
                 propertiesValidImage.visible = true
+            } else {
+                invalidImage.visible = true
             }
         }
     }

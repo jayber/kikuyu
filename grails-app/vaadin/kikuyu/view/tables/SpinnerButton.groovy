@@ -1,4 +1,4 @@
-package kikuyu.view
+package kikuyu.view.tables
 
 import com.vaadin.server.ExternalResource
 import com.vaadin.ui.Alignment

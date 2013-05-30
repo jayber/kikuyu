@@ -8,6 +8,8 @@ import com.vaadin.ui.VerticalLayout
 import kikuyu.domain.Page
 import kikuyu.domain.UrlMapping
 import kikuyu.view.editpage.SinglePageComponent
+import kikuyu.view.tables.UrlMappingTableFieldFactory
+import kikuyu.view.util.UrlSymbolResolver
 
 public interface KikuyuPresenter {
 
@@ -55,5 +57,5 @@ public interface KikuyuPresenter {
 
     def addSubstitutionVar(SinglePageComponent component)
 
-    Properties getComponentUrlSymbolProperties()
+    UrlSymbolResolver getUrlSymbolResolver()
 }

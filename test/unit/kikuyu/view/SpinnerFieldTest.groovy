@@ -10,6 +10,8 @@ import grails.test.mixin.support.GrailsUnitTestMixin
 import groovy.mock.interceptor.MockFor
 import kikuyu.TestFixtures
 import kikuyu.domain.UrlMapping
+import kikuyu.view.tables.SpinnerButton
+import kikuyu.view.tables.SpinnerField
 
 @TestMixin(GrailsUnitTestMixin)
 class SpinnerFieldTest {

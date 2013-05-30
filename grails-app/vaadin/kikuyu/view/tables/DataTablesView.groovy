@@ -1,4 +1,4 @@
-package kikuyu.view
+package kikuyu.view.tables
 
 import com.vaadin.event.ItemClickEvent
 import com.vaadin.grails.Grails
@@ -7,6 +7,7 @@ import com.vaadin.navigator.ViewChangeListener
 import com.vaadin.server.ThemeResource
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.Runo
+import kikuyu.view.KikuyuPresenter
 
 class DataTablesView extends VerticalLayout implements View {
 

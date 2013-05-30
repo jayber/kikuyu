@@ -1,5 +1,6 @@
 import kikuyu.view.HtmlRetriever
 import kikuyu.view.KikuyuPresenterImpl
+import kikuyu.view.util.UrlSymbolResolver
 
 // Place your Spring DSL code here
 beans = {
@@ -9,13 +10,17 @@ beans = {
         urlMappingService = ref("urlMappingService")
         pageService = ref("pageService")
         retriever = ref("htmlRetriever")
-        componentUrlSymbolProperties = ref("componentUrlSymbolProperties")
+        urlSymbolResolver = ref("urlSymbolResolver")
+    }
+
+    urlSymbolResolver(UrlSymbolResolver) {
+        urlSymbolProperties = ref("urlSymbolProperties")
     }
 
     htmlRetriever(HtmlRetriever)
 
-    //use property override configuration to change these properties in diff envs
-    util.properties(id: 'componentUrlSymbolProperties', location: "${overrideFromCommandLine('componentUrlSymbolLocation', 'classpath:componentUrlSymbolProperties.properties')}")
+    //use -DcomponentUrlSymbolLocation to set location of properties file for each env via command line
+    util.properties(id: 'urlSymbolProperties', location: "${overrideFromCommandLine('componentUrlSymbolLocation', 'classpath:componentUrlSymbolProperties.properties')}")
 }
 
 def overrideFromCommandLine(String varName, String defaultValue) {
@@ -24,5 +29,6 @@ def overrideFromCommandLine(String varName, String defaultValue) {
         log.info "overriding $varName with command line value: $overrideValue"
         return overrideValue
     }
+    log.info "using default value for: $varName = $defaultValue"
     return defaultValue
 }

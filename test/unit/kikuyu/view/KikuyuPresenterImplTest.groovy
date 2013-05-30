@@ -18,6 +18,9 @@ import kikuyu.service.PageService
 import kikuyu.service.UrlMappingService
 import kikuyu.view.editpage.EditPageView
 import kikuyu.view.editpage.SinglePageComponent
+import kikuyu.view.tables.NamedColumnContainer
+import kikuyu.view.tables.UrlMappingTableFieldFactory
+import kikuyu.view.util.UrlSymbolResolver
 import org.junit.Before
 import org.junit.Test
 
@@ -32,12 +35,14 @@ class KikuyuPresenterImplTest {
 
     MockFor urlMappingService
     MockFor pageService
+    UrlSymbolResolver symbolicUrlResolver
 
     @Before
     public void setUp() throws Exception {
         target = new KikuyuPresenterImpl()
         urlMappingService = new MockFor(UrlMappingService)
         pageService = new MockFor(PageService)
+        symbolicUrlResolver = new UrlSymbolResolver(urlSymbolProperties: new Properties())
     }
 
     void testGetTableDataSource() {
@@ -280,6 +285,8 @@ class KikuyuPresenterImplTest {
             "test html"
         }
         target.retriever = mockRetriever.createMock()
+
+        target.urlSymbolResolver = symbolicUrlResolver
 
         def pageServiceMockInstance = setUpPageServiceSave(page)
 

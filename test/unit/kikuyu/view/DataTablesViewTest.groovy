@@ -8,6 +8,8 @@ import grails.test.mixin.TestMixin
 import grails.test.mixin.support.GrailsUnitTestMixin
 import kikuyu.domain.Page
 import kikuyu.domain.UrlMapping
+import kikuyu.view.tables.DataTablesView
+import kikuyu.view.tables.NamedColumnContainer
 import org.junit.After
 import org.junit.Before
 

@@ -14,13 +14,17 @@ import kikuyu.service.UrlMappingService
 import kikuyu.view.editpage.EditPageView
 import kikuyu.view.editpage.NamePrompt
 import kikuyu.view.editpage.SinglePageComponent
+import kikuyu.view.tables.DataTablesView
+import kikuyu.view.tables.NamedColumnContainer
+import kikuyu.view.tables.UrlMappingTableFieldFactory
+import kikuyu.view.util.UrlSymbolResolver
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 class KikuyuPresenterImpl implements KikuyuPresenter {
 
-    Properties componentUrlSymbolProperties
+    UrlSymbolResolver urlSymbolResolver
     Pattern slotPattern = ~"<div[^<>]*?location\\s*?>.*?</\\s*?div>"
     Pattern substVarPattern = ~/#\{(.*?)\}/
 
@@ -137,8 +141,8 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
     }
 
     def scanAction = { SinglePageComponent pageComponent ->
-        final int slots = acquireNumberOfSlots(pageComponent.getUrl())
-        final String[] varNames = acquireSubstitutionVarNames(pageComponent.getUrl())
+        final int slots = acquireNumberOfSlots(urlSymbolResolver.resolveToConcreteUrl(pageComponent.getUrl()))
+        final String[] varNames = acquireSubstitutionVarNames(urlSymbolResolver.resolveToConcreteUrl(pageComponent.getUrl()))
         pageComponent.slots = slots
 
         def vars = [:]
