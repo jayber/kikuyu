@@ -63,7 +63,37 @@ class SinglePageComponentValidateUrlTest {
 
     public void testHttpField() throws Exception {
 
-        when(property.value).thenReturn("http://s.s?s=s")
+        when(property.value).thenReturn("http://s1~.s?s/v.r=s&g%2A.+@~")
+
+        target.validateUrl(event, validUrlImage, propertiesValidImage, invalidImage)
+
+        verify(validUrlImage).visible = false
+        verify(propertiesValidImage).visible = false
+        verify(invalidImage).visible = false
+
+        verify(validUrlImage).visible = true
+
+        verifyNoMoreInteractions(validUrlImage, propertiesValidImage, invalidImage)
+    }
+
+    public void testHttpFieldPath() throws Exception {
+
+        when(property.value).thenReturn("http://s1~.s/some/thing?s/v.r=s&g%2A.+@~")
+
+        target.validateUrl(event, validUrlImage, propertiesValidImage, invalidImage)
+
+        verify(validUrlImage).visible = false
+        verify(propertiesValidImage).visible = false
+        verify(invalidImage).visible = false
+
+        verify(validUrlImage).visible = true
+
+        verifyNoMoreInteractions(validUrlImage, propertiesValidImage, invalidImage)
+    }
+
+    public void testSimpleHttpField() throws Exception {
+
+        when(property.value).thenReturn("http://s1~.s-.com")
 
         target.validateUrl(event, validUrlImage, propertiesValidImage, invalidImage)
 
@@ -78,7 +108,7 @@ class SinglePageComponentValidateUrlTest {
 
     public void testInvalidHttpField() throws Exception {
 
-        when(property.value).thenReturn("http://s<")
+        when(property.value).thenReturn("http://s\"")
 
         target.validateUrl(event, validUrlImage, propertiesValidImage, invalidImage)
 
@@ -91,7 +121,7 @@ class SinglePageComponentValidateUrlTest {
         verifyNoMoreInteractions(validUrlImage, propertiesValidImage, invalidImage)
     }
 
-    public void testValidSymbolField() throws Exception {
+    public void testValidSymbolFieldSimple() throws Exception {
 
         when(property.value).thenReturn("real/path")
 
@@ -106,7 +136,7 @@ class SinglePageComponentValidateUrlTest {
         verifyNoMoreInteractions(validUrlImage, propertiesValidImage, invalidImage)
     }
 
-    public void testValidSymbolField2() throws Exception {
+    public void testValidSymbolFieldWithPath() throws Exception {
 
         when(property.value).thenReturn("real/path/more")
 
@@ -117,6 +147,51 @@ class SinglePageComponentValidateUrlTest {
         verify(invalidImage).visible = false
 
         verify(propertiesValidImage).visible = true
+
+        verifyNoMoreInteractions(validUrlImage, propertiesValidImage, invalidImage)
+    }
+
+    public void testValidSymbolFieldWithComplexPath() throws Exception {
+
+        when(property.value).thenReturn("real/path.do~hare_/m@o/-re/")
+
+        target.validateUrl(event, validUrlImage, propertiesValidImage, invalidImage)
+
+        verify(validUrlImage).visible = false
+        verify(propertiesValidImage).visible = false
+        verify(invalidImage).visible = false
+
+        verify(propertiesValidImage).visible = true
+
+        verifyNoMoreInteractions(validUrlImage, propertiesValidImage, invalidImage)
+    }
+
+    public void testValidSymbolFieldWithQueryString() throws Exception {
+
+        when(property.value).thenReturn("real/path?d=h&.:@")
+
+        target.validateUrl(event, validUrlImage, propertiesValidImage, invalidImage)
+
+        verify(validUrlImage).visible = false
+        verify(propertiesValidImage).visible = false
+        verify(invalidImage).visible = false
+
+        verify(propertiesValidImage).visible = true
+
+        verifyNoMoreInteractions(validUrlImage, propertiesValidImage, invalidImage)
+    }
+
+    public void testInvalidSymbolFieldPath() throws Exception {
+
+        when(property.value).thenReturn("real/path£/more")
+
+        target.validateUrl(event, validUrlImage, propertiesValidImage, invalidImage)
+
+        verify(validUrlImage).visible = false
+        verify(propertiesValidImage).visible = false
+        verify(invalidImage).visible = false
+
+        verify(invalidImage).visible = true
 
         verifyNoMoreInteractions(validUrlImage, propertiesValidImage, invalidImage)
     }

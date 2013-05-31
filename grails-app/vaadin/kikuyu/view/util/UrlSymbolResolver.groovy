@@ -3,23 +3,26 @@ package kikuyu.view.util
 import java.util.regex.Pattern
 
 class UrlSymbolResolver {
-    private static final Pattern VALID_URL_PATTERN = ~"^http://[\\.\\d\\w-_/]+\\?[\\.\\d\\w-_/=]+\$"
+    //these patterns are just rough guesses, not exhaustive or necessarily correct
+    private static final String VALID_PATH_QUERY_STRING = "[\\.a-zA-Z0-9\\-_~!\$&'()\\*\\+,;=:@%/]+?\\??[\\.a-zA-Z0-9\\-_~!\$&'()\\*\\+,;=:@%/]+\$"
+    private static final Pattern VALID_PATH_QUERY_PATTERN = ~(VALID_PATH_QUERY_STRING)
+    private static final Pattern VALID_URL_PATTERN = ~("^http://" + VALID_PATH_QUERY_STRING)
     private static final String PATH_SEPARATOR = "/"
 
     Properties urlSymbolProperties
 
     boolean isValidSymbolicUrl(String url) {
-        String symbol = extractSymbol(url)
-        urlSymbolProperties.containsKey(symbol)
+        String[] parts = splitUrl(url)
+        boolean symbolValid = urlSymbolProperties.containsKey(parts[0])
+        boolean pathValid = true
+        if (parts.length > 1) {
+            pathValid = VALID_PATH_QUERY_PATTERN.matcher(parts[1]).matches()
+        }
+        symbolValid && pathValid
     }
 
     boolean isValidConcreteUrl(String url) {
         VALID_URL_PATTERN.matcher(url).matches()
-    }
-
-    private String extractSymbol(String url) {
-        String[] parts = splitUrl(url)
-        return parts[0]
     }
 
     private String[] splitUrl(String url) {
