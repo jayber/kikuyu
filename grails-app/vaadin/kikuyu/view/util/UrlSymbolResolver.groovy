@@ -30,7 +30,7 @@ class UrlSymbolResolver {
         return parts
     }
 
-    String resolveSymbol(String symbol) {
+    private String resolveSymbol(String symbol) {
         urlSymbolProperties.getProperty(symbol)
     }
 

@@ -19,8 +19,8 @@ beans = {
 
     htmlRetriever(HtmlRetriever)
 
-    //use -DcomponentUrlSymbolLocation to set location of properties file for each env via command line
-    util.properties(id: 'urlSymbolProperties', location: "${overrideFromCommandLine('componentUrlSymbolLocation', 'classpath:componentUrlSymbolProperties.properties')}")
+    //use -DurlSymbolLocation to set location of properties file for each env via command line
+    util.properties(id: 'urlSymbolProperties', location: "${overrideFromCommandLine('urlSymbolLocation', 'classpath:urlSymbolProperties.properties')}")
 }
 
 def overrideFromCommandLine(String varName, String defaultValue) {
