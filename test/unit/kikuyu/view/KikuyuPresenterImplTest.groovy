@@ -16,11 +16,11 @@ import kikuyu.domain.Page
 import kikuyu.domain.UrlMapping
 import kikuyu.service.PageService
 import kikuyu.service.UrlMappingService
+import kikuyu.util.UrlSymbolResolver
 import kikuyu.view.editpage.EditPageView
 import kikuyu.view.editpage.SinglePageComponent
 import kikuyu.view.tables.NamedColumnContainer
 import kikuyu.view.tables.UrlMappingTableFieldFactory
-import kikuyu.view.util.UrlSymbolResolver
 import org.junit.Before
 import org.junit.Test
 

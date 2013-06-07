@@ -1,4 +1,4 @@
-package kikuyu.view.util
+package kikuyu.util
 
 import java.util.regex.Pattern
 

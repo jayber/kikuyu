@@ -1,0 +1,1 @@
+nohup mongodb-install/bin/mongod --dbpath data/db &

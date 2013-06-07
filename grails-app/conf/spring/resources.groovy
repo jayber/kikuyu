@@ -1,6 +1,6 @@
+import kikuyu.util.UrlSymbolResolver
 import kikuyu.view.HtmlRetriever
 import kikuyu.view.KikuyuPresenterImpl
-import kikuyu.view.util.UrlSymbolResolver
 
 // Place your Spring DSL code here
 beans = {

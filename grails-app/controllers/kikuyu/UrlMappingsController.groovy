@@ -3,7 +3,7 @@ package kikuyu
 import grails.converters.JSON
 import kikuyu.domain.PageComponent
 import kikuyu.domain.UrlMapping
-import kikuyu.view.util.UrlSymbolResolver
+import kikuyu.util.UrlSymbolResolver
 
 class UrlMappingsController {
     UrlSymbolResolver urlSymbolResolver

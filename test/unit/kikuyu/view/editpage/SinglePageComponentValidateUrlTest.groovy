@@ -6,8 +6,8 @@ import grails.test.GrailsMock
 import grails.test.mixin.TestMixin
 import grails.test.mixin.support.GrailsUnitTestMixin
 import kikuyu.domain.PageComponent
+import kikuyu.util.UrlSymbolResolver
 import kikuyu.view.KikuyuPresenter
-import kikuyu.view.util.UrlSymbolResolver
 import org.junit.Before
 
 import static org.mockito.Mockito.*

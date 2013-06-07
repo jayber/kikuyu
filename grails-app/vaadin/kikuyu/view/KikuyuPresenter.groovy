@@ -7,9 +7,9 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.VerticalLayout
 import kikuyu.domain.Page
 import kikuyu.domain.UrlMapping
+import kikuyu.util.UrlSymbolResolver
 import kikuyu.view.editpage.SinglePageComponent
 import kikuyu.view.tables.UrlMappingTableFieldFactory
-import kikuyu.view.util.UrlSymbolResolver
 
 public interface KikuyuPresenter {
 
