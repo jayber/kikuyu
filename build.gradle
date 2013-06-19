@@ -19,8 +19,7 @@ task doBuild(type: Exec) {
 
 task deploy(dependsOn: doBuild) << {
 
-    println "*** IMPORTANT: make sure you have stopped your kikuyu server before running the deploy script, otherwise it will fail." +
-            " Run ./stopKikuyuServer.sh"
+    println "*** IMPORTANT: make sure you have stopped your kikuyu server before running the deploy script, otherwise it will fail."
 
     checkVariables()
 
@@ -28,9 +27,9 @@ task deploy(dependsOn: doBuild) << {
 
     defineAntTasks()
 
-    uploadFile(targetFile)
-
     def dirName = "kikuyu-app"
+
+    uploadFile(targetFile, dirName)
 
     setUpServerScripts(dirName)
 

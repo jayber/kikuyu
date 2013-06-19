@@ -9,17 +9,19 @@ class UrlMappingsController {
     UrlSymbolResolver urlSymbolResolver
 
     def GET() {
+
         JSON.use('deep')
+        //todo: worried that registeringObjectMarshaller on each request will keep adding until memory fills up?
         JSON.registerObjectMarshaller(PageComponent) { PageComponent it ->
-            def returnArray = [:]
+            def map = [:]
 
-            returnArray['template'] = it.template
-            returnArray['acceptPost'] = it.acceptPost
-            returnArray['url'] = urlSymbolResolver.resolveToConcreteUrl(it.url)
-            returnArray['slots'] = it.slots
-            returnArray['substitutionVariables'] = it.substitutionVariables
+            map['template'] = it.template
+            map['acceptPost'] = it.acceptPost
+            map['url'] = urlSymbolResolver.resolveToConcreteUrl(it.url)
+            map['slots'] = it.slots
+            map['substitutionVariables'] = it.substitutionVariables
 
-            return returnArray
+            return map
         }
         render(contentType: "application/json", text: UrlMapping.listOrderByMatchOrder().encodeAsJSON())
     }
