@@ -1,6 +1,6 @@
 package kikuyu.view
 
-import org.apache.juli.logging.LogFactory
+import org.apache.commons.logging.LogFactory
 import org.springframework.web.client.RestTemplate
 
 class HtmlRetriever {

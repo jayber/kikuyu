@@ -1,47 +1,46 @@
 apply plugin: 'java'
 
 ext {
+
+    applicationName = "kikuyu"
+    hostName = "a-devapp1"
     username = { "jbown$it" }
     password = { "darw1nd$it" }
-    instancePath = { "/apps1/instance_d$it" }
-    hostName = "a-devapp1"
-    kikuyuDir = 'kikuyu'
-    serverPath = { envNo -> "${instancePath(envNo)}/$kikuyuDir" }
-    scpPath = { envNo -> "${username(envNo)}:${password(envNo)}@$hostName:${serverPath(envNo)}" }
-    targetFile = "$rootDir/target/kikuyu-app.jar"
+
+    applicationDeployDirPath = { "/apps1/instance_d$it/plc/jboss-eap-4.2-web01/jboss-as/server/plcapps/deploy/${applicationName}.war" }
+    scpPath = { envNo -> "${username(envNo)}:${password(envNo)}@$hostName:${applicationDeployDirPath(envNo)}" }
+
+    targetFile = "$rootDir/target/${applicationName}.war"
+    remoteTargetFile = { envNo -> "${applicationDeployDirPath(envNo)}/${applicationName}.war" }
+    applicationUrl = { envNo -> "http://d${envNo}-infra.dev.practicallaw.com:8080/$applicationName" }
+
 }
 
 task doBuild(type: Exec) {
-    commandLine 'cmd', '/c', "grails prod build-standalone", targetFile
+
+    commandLine 'cmd', '/c', "grails test war", targetFile
 
     standardOutput = System.out
 }
 
 task deploy(dependsOn: doBuild) << {
 
-    println "*** IMPORTANT: make sure you have stopped your kikuyu server before running the deploy script, otherwise it will fail."
+    println "*** IMPORTANT: make sure you have stopped application server before deploying this application"
 
     checkVariables()
 
-    println "filename: $targetFile"
-
     defineAntTasks()
 
-    def dirName = "kikuyu-app"
+    emptyRemoteDirectory(applicationDeployDirPath(envNo))
 
-    uploadFile(targetFile, dirName)
+    uploadFile(targetFile, scpPath(envNo))
 
-    setUpServerScripts(dirName)
+    unzipFile(remoteTargetFile(envNo), applicationDeployDirPath(envNo))
 
-    println "*** SUCCESS: you can start your kikuyu server by running: ${serverPath(envNo)}/$dirName/startKikuyuApp.sh"
+    deleteFile(remoteTargetFile(envNo))
 
-}
+    println "*** SUCCESS *** Start the server. You can access application by '${applicationUrl(envNo)}' "
 
-private void setUpServerScripts(String dirName) {
-
-    uploadFile("$rootDir/deploy/startKikuyuApp.sh", dirName)
-
-    runServerCommand("chmod 755 ${serverPath(envNo)}/$dirName/startKikuyuApp.sh")
 }
 
 private checkVariables() {
@@ -60,17 +59,29 @@ private checkVariables() {
     }
 }
 
-private void runServerCommand(command) {
-    println "SSH command: $command"
-    ant.ssh(host: hostName, username: username(envNo), password: password(envNo), trust: 'yes', command: command, outputproperty: 'outprop')
-    println ant.outprop
-    ant.outprop = ""
+private emptyRemoteDirectory(String deployDir) {
+
+    def removeAllContents = "rm -f -r " + deployDir
+    def createIfDoesNotExist = "mkdir -p " + deployDir
+
+    runServerCommand(removeAllContents)
+    runServerCommand(createIfDoesNotExist)
+
 }
 
-private void uploadFile(String fileName, extraPath = "") {
-    def toDir = scpPath(envNo) + "/" + extraPath
-    ant.scopy(file: fileName, todir: toDir, trust: true)
-    println "File: $fileName uploaded to: $toDir"
+private deleteFile(String filePath) {
+    def delete = "rm -f " + filePath
+    runServerCommand(delete)
+}
+
+private void uploadFile(String fileToDeploy, String remoteDirectory) {
+    ant.scopy(file: fileToDeploy, todir: remoteDirectory, trust: true)
+    println "File: $fileToDeploy uploaded to: $remoteDirectory"
+}
+
+private void unzipFile(String filePath, String unzipDirectory) {
+    def command = "unzip -o ${filePath} -d ${unzipDirectory}/"
+    runServerCommand(command)
 }
 
 private void defineAntTasks() {
@@ -81,6 +92,13 @@ private void defineAntTasks() {
     ant.taskdef(name: 'ssh',
             classname: 'org.apache.tools.ant.taskdefs.optional.ssh.SSHExec',
             classpath: configurations.antScp.asPath)
+}
+
+private void runServerCommand(command) {
+    println "SSH command: $command"
+    ant.ssh(host: hostName, username: username(envNo), password: password(envNo), trust: 'yes', command: command, outputproperty: 'outprop')
+    println ant.outprop
+    ant.outprop = ""
 }
 
 repositories {

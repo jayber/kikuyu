@@ -1,8 +1,42 @@
+kikuyu application
+==================
 
+Installation
+#############
+
+Pre-requisites
+
+1. Install grails on your machine
 You will need to install grails 2.2.1, and set this project up in IntelliJ as a grails project:
 http://grails.org
+Use grails 'add-proxy' and 'set-proxy' commands. Note, that proxy server should not have protocol provided:
+ 'cache2.practicallaw.com'.
 
+2. Install MongoDB on your machine and your dev env
 You will also need to install mongodb server:
 http://www.mongodb.org/
+Follow the instructions for installing and testing mongodb.
+When installing in your dev env, note that port must be unique, so avoid using default port.
+You can specify the port with additional argument '--port [port]' in shell script.
 
-follow the instructions for installing and testing mongodb
+4. Install Gradle on your machine
+http://www.gradle.org/
+
+5. Configure dynamic data in application
+ *mongo-datasource.properties
+
+Running locally
+###############
+Use 'run-app' command from grails console from application directory or IntelliJ grails configuration to run
+the application. Default port is 8080, you can override it using -Dserver.port=[port_number] either from command line
+or by adding VM option on IntelliJ configuration.
+
+Build and deploy
+################
+ *  Stop the server.
+ *  Execute gradle 'deploy' target for deploy which automatically invokes build as well.
+    You can specify environment by providing envNo variable either from command line or gradle.properties.
+    For example: 'gradle -PenvNo=37 deploy'.
+ *  Start the server. You can access application by going to 'http://d[env]-infra.dev.practicallaw.com:8080/kikuyu'
+
+
