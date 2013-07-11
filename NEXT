@@ -2,3 +2,4 @@ Might need to:
 1. Logs to separate file
 2. Properties from environment variables
 3. Start/Stop server automatically with deploy script
+4. Remove *.sh as they are needed anymore as application replaced from stand-alone to AS app

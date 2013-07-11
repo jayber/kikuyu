@@ -26,7 +26,7 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
 
     UrlSymbolResolver urlSymbolResolver
     Pattern slotPattern = ~"<div[^<>]*?location\\s*?>.*?</\\s*?div>"
-    Pattern substVarPattern = ~/#\{(.*?)\}/
+    Pattern substVarPattern = ~/@\{(.*?)\}/
 
     UrlMappingService urlMappingService
     PageService pageService

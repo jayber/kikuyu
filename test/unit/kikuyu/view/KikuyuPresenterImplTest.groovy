@@ -228,7 +228,7 @@ class KikuyuPresenterImplTest {
         final String testUrl = "testUrl"
         mock.demand.retrieveHtml(1) { String url ->
             assert testUrl == url
-            "before #{var1} middle #{var2} after"
+            "before @{var1} middle @{var2} after"
         }
         target.retriever = mock.createMock()
 
