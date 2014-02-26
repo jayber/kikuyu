@@ -43,6 +43,8 @@ public interface KikuyuPresenter {
 
     def getCreateNewUrlMapping()
 
+    def getExportConfiguration()
+
     String[] acquireSubstitutionVarNames(String componentUrl)
 
     def getNavigateHomeAction()
@@ -58,4 +60,6 @@ public interface KikuyuPresenter {
     def addSubstitutionVar(SinglePageComponent component)
 
     UrlSymbolResolver getUrlSymbolResolver()
+
+    void setHost(String host)
 }

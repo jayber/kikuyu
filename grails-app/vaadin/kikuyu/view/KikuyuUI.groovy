@@ -11,7 +11,9 @@ class KikuyuUI extends UI {
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-        content = new KikuyuContainer(Grails.get(KikuyuPresenter), this)
+        def presenter = Grails.get(KikuyuPresenter)
+        presenter.host = vaadinRequest.getHeader("Host")
+        content = new KikuyuContainer(presenter, this)
 
         String homeLabel = Grails.i18n("default.home.label")
         Page.getCurrent().setTitle(homeLabel)

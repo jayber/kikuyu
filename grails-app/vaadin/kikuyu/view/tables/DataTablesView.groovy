@@ -23,6 +23,22 @@ class DataTablesView extends VerticalLayout implements View {
         setMargin(true)
 
         addComponent(buildTabs())
+        addComponent(buildExportComponent())
+    }
+
+    private Component buildExportComponent() {
+        def layout = new HorizontalLayout()
+        TextField field = new TextField()
+        field.setRequiredError("you must enter a valid server file path")
+        field.required = true
+        layout.addComponent(field)
+        Button button = new Button("Export", {presenter.exportConfiguration(field)} as Button.ClickListener)
+        layout.addComponent(button)
+        field.setInputPrompt("export file path")
+        field.setWidth("300px")
+        layout.setSpacing(true)
+        layout.setMargin(true)
+        return layout
     }
 
     @Override

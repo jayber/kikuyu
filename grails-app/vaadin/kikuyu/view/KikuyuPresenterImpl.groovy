@@ -18,6 +18,7 @@ import kikuyu.view.editpage.SinglePageComponent
 import kikuyu.view.tables.DataTablesView
 import kikuyu.view.tables.NamedColumnContainer
 import kikuyu.view.tables.UrlMappingTableFieldFactory
+import org.springframework.web.client.RestTemplate
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -32,6 +33,8 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
     PageService pageService
     Navigator navigator
     HtmlRetriever retriever
+
+    String host
 
     @Override
     NamedColumnContainer getUrlMappingTableDataSource() {
@@ -122,6 +125,21 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
         urlMappingTable.setEditable(true)
     }
 
+    def exportConfiguration = { pathField ->
+        if (pathField.value != null && pathField.value != "") {
+            def filePath = pathField.value
+
+            RestTemplate ws = new RestTemplate()
+            def json = ws.getForObject("http://$host/kikuyu/urlMappings", String.class)
+
+            def file = new File(filePath)
+            file.createNewFile()
+            file.withWriter { out ->
+                out.write(json)
+            }
+        }
+    }
+
     @Override
     String[] acquireSubstitutionVarNames(String componentUrl) {
         String templateHtml = retriever.retrieveHtml(componentUrl)
@@ -184,4 +202,5 @@ class KikuyuPresenterImpl implements KikuyuPresenter {
         window.modal = true
         component.getUI().addWindow(window)
     }
+
 }
