@@ -59,6 +59,10 @@ class EditPageView extends VerticalLayout implements View {
         TextField field = new TextField("Name", new MethodProperty(page, "name"))
         layout.addComponent(field);
         FieldUtils.setUpField(field, presenter, page)
+
+        def label = new Label("Use {0} to pass path and {params} to pass query to components")
+        label.addStyleName("instructions")
+        layout.addComponent(label)
     }
 
     //default for test
